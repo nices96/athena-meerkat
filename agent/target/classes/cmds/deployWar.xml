@@ -1,0 +1,46 @@
+<project name="deploy war" basedir="." default="cmd">
+	
+	<!-- 
+	#########################################
+	# deploy war file.
+	#########################################
+	-->
+	
+	<property file="${basedir}/build.properties" />
+	<property file="${basedir}/build-ssh.properties" />
+	
+
+	<target name="cmd">
+		
+		<property name="upload.path" value="${catalina.base}/temp" />
+		<property name="webapp.path" value="${catalina.base}/webapps${contextPath}" />
+		
+		<property name="cmd1" value="rm -rf ${webapp.path}*" />
+		<property name="cmd2" value="mkdir ${webapp.path}" />
+		<property name="cmd3" value="cd ${agent.deploy.dir}/${agent.name}/bin" />
+		<property name="cmd4" value="${server.ant.home}/bin/ant -Dsrc=${upload.path}/${warFileName} -Ddest=${webapp.path} unzip" />
+
+		<echo>upload ${warFilePath}</echo>
+		<scp port="${server.port}" todir="${user.id}@${server.ip}:${upload.path}" trust="true" keyfile="${key.file}"
+			password="${user.passwd}" failonerror="true" file="${warFilePath}">
+		</scp>
+		
+		<!-- stop
+		<echo>stopping ${catalina.base}</echo>
+		<sshexec port="${server.port}" host="${server.ip}" username="${user.id}" password="${user.passwd}" keyfile="${key.file}"
+			command="cd ${catalina.base}; ./shutdown.sh" trust="true" failonerror="true" />
+		 -->
+
+		<echo>replace ${webapp.path}</echo>
+		<sshexec port="${server.port}" host="${server.ip}" username="${user.id}" password="${user.passwd}" keyfile="${key.file}"
+			command="${cmd1}; ${cmd2}; ${cmd3}; ${cmd4}" trust="true" failonerror="true" />
+		
+		
+		<!-- start
+		<echo>starting ${catalina.base}</echo>
+		<sshexec port="${server.port}" host="${server.ip}" username="${user.id}" password="${user.passwd}" keyfile="${key.file}"
+			command="cd ${catalina.base}; ./startup.sh nolog;" trust="true" failonerror="true" />
+		 -->
+	</target>
+
+</project>

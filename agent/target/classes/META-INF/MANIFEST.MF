@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: athena-meerkat-agent
+Implementation-Version: 1.0.0-SNAPSHOT
+Built-By: nices96
+Implementation-Vendor-Id: com.athena.meerkat
+Build-Jdk: 1.8.0_77
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+

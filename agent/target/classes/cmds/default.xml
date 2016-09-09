@@ -1,0 +1,132 @@
+<project name="MeerkatAgent default" basedir="." default="deploy-agent">
+
+	<property file="${basedir}/build.properties" />
+	<property file="${basedir}/build-ssh.properties" />
+	
+
+	<target name="deploy-agent" description="deploy to server">
+		
+		<property name="filename" value="${agent.name}-bin.tar.gz" />
+		
+		<property name="cmd1" value="cd ${agent.deploy.dir}" />
+		<property name="cmd2" value="tar xvfz ./${filename}" />
+		<property name="cmd3" value="rm -f ./${filename}" />
+		<property name="cmd4" value="mv ./agentenv.sh ./${agent.name}/bin/" />
+		<property name="cmd5" value="echo meerkat.controller.host.port=${meerkat.controller.host.port} >> ./${agent.name}/conf/meerkat-agent.properties" />
+		<property name="cmd6" value="echo meerkat.agent.server.id=${server.id} >> ./${agent.name}/conf/meerkat-agent.properties" />
+		<property name="cmd7" value="cd ./${agent.name}; ./startup.sh nolog" />
+
+		<echo>basedir : ${basedir}</echo>
+		<echo>create ${agent.deploy.dir}</echo>
+		<sshexec port="${server.port}" host="${server.ip}" username="${user.id}" password="${user.passwd}" keyfile="${key.file}"
+					command="mkdir ${agent.deploy.dir}" trust="true" failonerror="false"/>
+		
+		<echo>send ${filename}</echo>
+		<scp port="${server.port}" todir="${user.id}@${server.ip}:${agent.deploy.dir}" trust="true" keyfile="${key.file}"
+			password="${user.passwd}" failonerror="true">
+			<fileset dir="${basedir}/../../.." defaultexcludes="true">
+				<include name="${filename}"/>
+			</fileset>
+			<fileset dir="${basedir}" defaultexcludes="true">
+				<include name="agentenv.sh"/>
+				<!-- <include name="env.sh"/> -->
+			</fileset>
+		</scp>
+
+		<sshexec port="${server.port}" host="${server.ip}" username="${user.id}" password="${user.passwd}" keyfile="${key.file}"
+			command="${cmd1}; ${cmd2}; ${cmd3}; ${cmd4}; ${cmd5}; ${cmd6}; ${cmd7}" trust="true" failonerror="true" />
+		
+		<echo>running agent.</echo>
+		
+	</target>
+	
+	
+	<target name="remove-agent" description="remove agent">
+
+		<echo>stopping agent.</echo>
+		<sshexec port="${server.port}" host="${server.ip}" username="${user.id}" password="${user.passwd}" keyfile="${key.file}"
+				command="cd ${agent.deploy.dir}/${agent.name}; ./kill.sh;" trust="true" failonerror="false" />
+		
+		<echo>remove agent.</echo>
+		
+		<sshexec port="${server.port}" host="${server.ip}" username="${user.id}" password="${user.passwd}" keyfile="${key.file}"
+				command="rm -rf ${agent.deploy.dir}/${agent.name}*;" trust="true" failonerror="true" />
+		
+	</target>
+	
+	<target name="send-cmd" description="send cmd build file to server and exec">
+
+		<echo>send *.xml and build.properties</echo>
+		<scp port="${server.port}" todir="${user.id}@${server.ip}:${agent.deploy.dir}/${agent.name}/bin" trust="true" keyfile="${key.file}"
+			password="${user.passwd}">
+			<fileset dir="${basedir}" defaultexcludes="true">
+				<include name="*.xml"/>
+				<include name="build.properties"/>
+				<include name="env.sh"/>
+				<exclude name="default.xml"/>
+			</fileset>
+		</scp>
+		
+		<sshexec port="${server.port}" host="${server.ip}" username="${user.id}" password="${user.passwd}" keyfile="${key.file}"
+			command="cd ${agent.deploy.dir}/${agent.name}/bin; ./runCmd.sh" trust="true" failonerror="false" />
+
+	</target>
+	
+	<target name="send-script" description="send other build file to server and exec">
+
+		<echo>send ${ant.script.file}</echo>
+		<scp port="${server.port}" todir="${user.id}@${server.ip}:${agent.deploy.dir}/${agent.name}/bin" trust="true" keyfile="${key.file}"
+			password="${user.passwd}">
+			<fileset dir="${basedir}" defaultexcludes="true">
+				<include name="${ant.script.file}"/>
+			</fileset>
+		</scp>
+		
+		<sshexec port="${server.port}" host="${server.ip}" username="${user.id}" password="${user.passwd}" keyfile="${key.file}"
+			command="cd ${agent.deploy.dir}/${agent.name}/bin; ./runCmd.sh ${ant.script.file}" trust="true" failonerror="false" />
+
+	</target>
+	
+	<target name="update-server.xml" description="">
+
+		<echo>update ${server.xml.file}</echo>
+		<scp port="${server.port}" todir="${user.id}@${server.ip}:${catalina.base}/conf/server.xml" trust="true" keyfile="${key.file}"
+			password="${user.passwd}" file="${server.xml.file}">
+		</scp>
+
+	</target>
+	
+	<target name="update-context.xml" description="">
+
+		<echo>update ${context.xml.file}</echo>
+		<scp port="${server.port}" todir="${user.id}@${server.ip}:${catalina.base}/conf/context.xml" trust="true" keyfile="${key.file}"
+			password="${user.passwd}" file="${context.xml.file}">
+		</scp>
+
+	</target>
+	
+	<target name="update-config" description="">
+
+		<antcall target="update-server.xml"></antcall>
+		<antcall target="update-context.xml"></antcall>
+
+	</target>
+	
+	<target name="upload-files" description="upload to server">
+		
+		<echo>make ${upload.dir}</echo>
+		<sshexec port="${server.port}" host="${server.ip}" username="${user.id}" password="${user.passwd}" keyfile="${key.file}"
+					command="mkdir ${upload.dir}" trust="true" failonerror="false" />
+
+		<echo>upload ${upload.files}</echo>
+		<scp port="${server.port}" todir="${user.id}@${server.ip}:${upload.dir}" trust="true" keyfile="${key.file}"
+			password="${user.passwd}">
+			<fileset dir="${basedir}" defaultexcludes="true">
+				<include name="${upload.files}"/>
+			</fileset>
+		</scp>
+
+	</target>
+
+
+</project>

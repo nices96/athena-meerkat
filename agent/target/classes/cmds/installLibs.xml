@@ -1,0 +1,19 @@
+<project name="install libraries" basedir="." default="cmd">
+	
+	<!-- 
+	#########################################
+	# Install 3rd party libraries
+	#########################################
+	-->
+	
+	<property file="${basedir}/build.properties" />
+	
+
+	<target name="cmd">
+		
+		<echo message="downloading ${install.jar.name}" />
+		<get src="${jar.down.url}/${install.jar.name}" dest="${catalina.base}/shared/lib"/>
+
+	</target>
+
+</project>

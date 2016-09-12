@@ -70,13 +70,6 @@ public class Domain implements Serializable {
 		this.isClustering = isClustering;
 	}
 
-	public DatagridServerGroup getServerGroup() {
-		return serverGroup;
-	}
-
-	public void setServerGroup(DatagridServerGroup serverGroup) {
-		this.serverGroup = serverGroup;
-	}
 
 	public Collection<TomcatInstance> getTomcats() {
 		return tomcats;
@@ -95,5 +88,24 @@ public class Domain implements Serializable {
 	public Domain(String name, boolean is_clustering) {
 		this.name  = name;
 		this.isClustering = is_clustering;
+	}
+	
+	public int getTomcatInstancesCount (){
+		return tomcats.size();
+	}
+	
+	public String getDatagridServerGroupName(){
+		if (getServerGroup() != null){
+			return this.getServerGroup().getName();
+		}
+		return "";
+	}
+
+	public DatagridServerGroup getServerGroup() {
+		return serverGroup;
+	}
+
+	public void setServerGroup(DatagridServerGroup serverGroup) {
+		this.serverGroup = serverGroup;
 	}
 }

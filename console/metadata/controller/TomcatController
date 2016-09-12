@@ -30,7 +30,28 @@
                 "name": "click",
                 "scope": "me"
             },
+            "name": "onNewTomcatClick",
             "designerId": "729569ef-0153-4249-b36b-4c5ab2a96194"
+        },
+        {
+            "type": "controlleraction",
+            "reference": {
+                "name": "listeners",
+                "type": "array"
+            },
+            "codeClass": null,
+            "userConfig": {
+                "designer|controlQuery": "#domainTomcatTab",
+                "designer|targetType": "Ext.tab.Panel",
+                "fn": "onDomainTomcatTabTabChange",
+                "implHandler": [
+                    " "
+                ],
+                "name": "tabchange",
+                "scope": "me"
+            },
+            "name": "onDomainTomcatTabTabChange",
+            "designerId": "8499dc46-7fe0-4f1a-9b4a-d8e9d74ff333"
         }
     ]
 }

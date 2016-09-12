@@ -27,6 +27,7 @@
                 "store": "UserStore",
                 "title": "User List"
             },
+            "name": "MyGridPanel20",
             "designerId": "f5aa34d2-7996-401c-ac16-f3ff1becd130",
             "cn": [
                 {
@@ -42,6 +43,7 @@
                         "text": "UserID",
                         "width": 156
                     },
+                    "name": "MyColumn23",
                     "designerId": "4762a429-b6ec-4ce2-abf8-d37ff0d71610"
                 },
                 {
@@ -56,6 +58,7 @@
                         "text": "Full Name",
                         "width": 156
                     },
+                    "name": "MyColumn24",
                     "designerId": "d3f6944b-b8e7-4fdc-a8dd-67072cb57a4a"
                 },
                 {
@@ -69,21 +72,8 @@
                         "dataIndex": "userRoleName",
                         "text": "User Role"
                     },
+                    "name": "MyColumn25",
                     "designerId": "daecd585-f0eb-460e-b729-c52be613f741"
-                },
-                {
-                    "type": "Ext.grid.column.Column",
-                    "reference": {
-                        "name": "columns",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "dataIndex": "password",
-                        "text": "Pasword",
-                        "width": 186
-                    },
-                    "designerId": "d8475960-ddd4-403c-808b-bdc8b0f60869"
                 },
                 {
                     "type": "Ext.grid.column.Column",
@@ -97,6 +87,7 @@
                         "text": "Email",
                         "width": 208
                     },
+                    "name": "MyColumn26",
                     "designerId": "319d8892-a04d-424f-bfe8-1d085f772d52"
                 },
                 {
@@ -111,6 +102,7 @@
                         "text": "Created Date",
                         "width": 133
                     },
+                    "name": "MyColumn27",
                     "designerId": "cbe544a5-5987-4b9c-95f2-54ce894dab14"
                 },
                 {
@@ -125,6 +117,7 @@
                         "text": "Last Login",
                         "width": 133
                     },
+                    "name": "MyColumn28",
                     "designerId": "e2bb2693-302d-4c02-949f-ec73af01ab0e"
                 },
                 {
@@ -134,6 +127,7 @@
                         "type": "object"
                     },
                     "codeClass": null,
+                    "name": "MyGridView20",
                     "designerId": "3b7d14ee-dde1-45c8-9b17-d4b2f66ecd27"
                 },
                 {
@@ -146,6 +140,7 @@
                     "userConfig": {
                         "dock": "top"
                     },
+                    "name": "MyToolbar26",
                     "designerId": "92d40f14-89f4-430b-a198-a1eadfc202d6",
                     "cn": [
                         {
@@ -160,6 +155,7 @@
                                 "layout|flex": null,
                                 "text": "New"
                             },
+                            "name": "MyButton30",
                             "designerId": "1a2e9ca5-856b-4af1-acd6-dc53e513e12a"
                         },
                         {
@@ -172,6 +168,7 @@
                             "userConfig": {
                                 "layout|flex": null
                             },
+                            "name": "MySeparator9",
                             "designerId": "f223c3c5-21de-4dae-88b6-2f9a97fe02ab"
                         },
                         {
@@ -182,9 +179,13 @@
                             },
                             "codeClass": null,
                             "userConfig": {
+                                "emptyText": "User ID",
                                 "fieldLabel": "Filtering",
-                                "layout|flex": null
+                                "itemId": "mytextfield",
+                                "layout|flex": null,
+                                "name": "SearchTextField"
                             },
+                            "name": "MyTextField25",
                             "designerId": "bdbd5c68-bcda-431e-95bc-11d282026bec"
                         }
                     ]
@@ -199,6 +200,7 @@
                     "userConfig": {
                         "dock": "bottom"
                     },
+                    "name": "MyToolbar27",
                     "designerId": "dc0fe129-7e02-40aa-b052-0d5f4dc9441f",
                     "cn": [
                         {
@@ -214,6 +216,7 @@
                                 "store": "UserStore",
                                 "width": 1099
                             },
+                            "name": "MyPagingToolbar8",
                             "designerId": "564da720-e9b5-4d26-bf34-6084cf65dc94"
                         }
                     ]
@@ -244,12 +247,10 @@
                             "        click: function( _menu, _item, _e, _eOpts ) {",
                             "           switch (_item.id) {",
                             "                case 'edit-user':",
-                            "",
-                            "                   Ext.app.Controller.getController(\"UserController\").showUserWindow(\"edit\", 1);",
-                            "                   // Ext.app.getController(\"UserController\").showUserWindow(\"edit\", 1);",
+                            "                   webapp.app.getController(\"UserController\").showUserWindow(\"edit\", record.get(\"id\"));",
                             "                    break;",
                             "                case 'delete-user':",
-                            "                    alert(\"Delete user\");",
+                            "                    webapp.app.getController(\"UserController\").deleteUser(record.get(\"id\"));",
                             "                    break;",
                             "                default:",
                             "                    break;",
@@ -271,6 +272,7 @@
                         "name": "itemcontextmenu",
                         "scope": "me"
                     },
+                    "name": "onGridpanelItemContextMenu",
                     "designerId": "d89156f6-bd08-4e13-9bc4-9a63d91ef231"
                 }
             ]
@@ -289,6 +291,7 @@
                 "store": "UserRoleStore",
                 "title": "User Role"
             },
+            "name": "MyGridPanel21",
             "designerId": "07a6a734-7a4b-4970-84c1-a3aadcefa7ae",
             "cn": [
                 {
@@ -302,6 +305,7 @@
                         "dataIndex": "name",
                         "text": "Name"
                     },
+                    "name": "MyColumn29",
                     "designerId": "af7e7b90-92cb-4360-a6f5-55a977bd6b01"
                 },
                 {
@@ -316,6 +320,7 @@
                         "text": "User Count",
                         "width": 133
                     },
+                    "name": "MyColumn30",
                     "designerId": "51b8bad7-56fc-42c5-8189-4db978b79ac5"
                 },
                 {
@@ -325,46 +330,8 @@
                         "type": "object"
                     },
                     "codeClass": null,
+                    "name": "MyGridView21",
                     "designerId": "fbc00d28-dc21-445c-bcd0-382efb3c9a38"
-                },
-                {
-                    "type": "Ext.toolbar.Toolbar",
-                    "reference": {
-                        "name": "dockedItems",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "dock": "top"
-                    },
-                    "designerId": "c4f3f353-18e0-46b1-a1b4-3062e1a865bb",
-                    "cn": [
-                        {
-                            "type": "Ext.toolbar.Separator",
-                            "reference": {
-                                "name": "items",
-                                "type": "array"
-                            },
-                            "codeClass": null,
-                            "userConfig": {
-                                "layout|flex": null
-                            },
-                            "designerId": "64a96e4b-9f16-4d18-9c7d-9fd321f6498e"
-                        },
-                        {
-                            "type": "Ext.form.field.Text",
-                            "reference": {
-                                "name": "items",
-                                "type": "array"
-                            },
-                            "codeClass": null,
-                            "userConfig": {
-                                "fieldLabel": "Filtering",
-                                "layout|flex": null
-                            },
-                            "designerId": "84f7e6ea-3567-4ee1-bf50-ec2b503bf3e5"
-                        }
-                    ]
                 },
                 {
                     "type": "Ext.toolbar.Toolbar",
@@ -376,6 +343,7 @@
                     "userConfig": {
                         "dock": "bottom"
                     },
+                    "name": "MyToolbar28",
                     "designerId": "cfd46046-283b-4dec-a994-68207e7ddea4",
                     "cn": [
                         {
@@ -391,64 +359,10 @@
                                 "store": "UserRoleStore",
                                 "width": 1099
                             },
+                            "name": "MyPagingToolbar9",
                             "designerId": "f2d02e21-d78d-4969-a250-e08f641d4144"
                         }
                     ]
-                },
-                {
-                    "type": "basiceventbinding",
-                    "reference": {
-                        "name": "listeners",
-                        "type": "array"
-                    },
-                    "codeClass": null,
-                    "userConfig": {
-                        "fn": "onGridpanelItemContextMenu1",
-                        "implHandler": [
-                            "var mnuContext = Ext.create(\"Ext.menu.Menu\",{",
-                            "",
-                            "    items: [{",
-                            "        id: 'edit-user',",
-                            "        text: 'Edit'",
-                            "    },",
-                            "    {",
-                            "        id: 'delete-user',",
-                            "        text: 'Delete'",
-                            "    }",
-                            "           ],",
-                            "    listeners: {",
-                            "",
-                            "        click: function( _menu, _item, _e, _eOpts ) {",
-                            "           switch (_item.id) {",
-                            "                case 'edit-user':",
-                            "",
-                            "                   Ext.app.Controller.getController(\"UserController\").showUserWindow(\"edit\", 1);",
-                            "                   // Ext.app.getController(\"UserController\").showUserWindow(\"edit\", 1);",
-                            "                    break;",
-                            "                case 'delete-user':",
-                            "                    alert(\"Delete user\");",
-                            "                    break;",
-                            "                default:",
-                            "                    break;",
-                            "           }",
-                            "        },",
-                            "        hide:function(menu){",
-                            "            menu.destroy();",
-                            "        }",
-                            "    },",
-                            "    defaults: {",
-                            "       clickHideDelay: 1",
-                            "    }",
-                            "});",
-                            "",
-                            "mnuContext.showAt(e.getXY());",
-                            "e.stopEvent();",
-                            ""
-                        ],
-                        "name": "itemcontextmenu",
-                        "scope": "me"
-                    },
-                    "designerId": "85a549d9-4f47-4178-ad08-9981b5f93da9"
                 }
             ]
         }

@@ -1,6 +1,5 @@
 package com.athena.dolly.controller.web.user;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -23,6 +22,9 @@ public class UserService implements InitializingBean {
 	public List<User2> getUsers(String userID, String email){
 		return repo.findByUserNameOrEmail(userID, email);
 	}
+	public List<User2>getUsers(String userID){
+		return repo.findByUserNameContaining(userID);
+	}
 
 	public List<UserRole2> getRoleList() {
 		return roleRepo.findAll();
@@ -32,9 +34,18 @@ public class UserService implements InitializingBean {
 		return roleRepo.findOne(id);
 	}
 	
-	public User2 addUser(User2 user){
+	public User2 saveUser(User2 user){
 		return repo.save(user);
 	}
+	
+	public User2 findUser(int id){
+		return repo.findOne(id);
+	}
+	
+	public void deleteUser(User2 user){
+		repo.delete(user);
+	}
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		System.err.println("\n\nrepo in UserService : " + repo);

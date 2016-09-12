@@ -44,7 +44,7 @@ import com.athena.dolly.controller.ServiceResult.Status;
 import com.athena.dolly.controller.common.SSHManager;
 import com.athena.dolly.controller.tomcat.instance.domain.ConfigFileVersion;
 import com.athena.dolly.controller.tomcat.instance.domain.ConfigFileVersionRepository;
-import com.athena.dolly.controller.tomcat.instance.domain.QConfigFileVersion;
+//import com.athena.dolly.controller.tomcat.instance.domain.QConfigFileVersion;
 import com.athena.dolly.controller.web.datasource.Datasource;
 import com.athena.dolly.controller.web.datasource.DatasourceRepository;
 import com.mysema.query.jpa.impl.JPAQuery;
@@ -84,8 +84,8 @@ public class TomcatInstanceService {
 		return repo.findAll(pageable);
 	}
 
-	public ServiceResult getTomcatListByDomainId(int domainId) {
-		return new ServiceResult(Status.DONE, "", repo.findByDomainId(domainId));
+	public List<TomcatInstance> getTomcatListByDomainId(int domainId) {
+		return repo.findByDomainId(domainId);
 	}
 
 	/**
@@ -253,7 +253,8 @@ public class TomcatInstanceService {
 		}
 		return null;
 	}
-	public ServiceResult getAll(){
+
+	public ServiceResult getAll() {
 		return new ServiceResult(Status.DONE, "", repo.findAll());
 	}
 

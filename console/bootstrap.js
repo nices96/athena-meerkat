@@ -865,7 +865,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "console.view.Main": [],
   "console.view.Viewport": [],
   "webapp.controller.ApplicationController": [],
-  "webapp.controller.CluteringConfigurationController": [],
+  "webapp.controller.ClusteringConfigurationController": [],
   "webapp.controller.DatasourceController": [],
   "webapp.controller.DomainController": [],
   "webapp.controller.LoginController": [],
@@ -876,6 +876,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.controller.footerController": [],
   "webapp.controller.globalController": [],
   "webapp.controller.headerController": [],
+  "webapp.model.ApplicationModel": [],
   "webapp.model.DatagridServerGroupModel": [],
   "webapp.model.DomainModel": [],
   "webapp.model.MachineModel": [],
@@ -883,6 +884,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.model.TomcatInstanceModel": [],
   "webapp.model.UserModel": [],
   "webapp.model.UserRoleModel": [],
+  "webapp.store.ApplicationStore": [],
   "webapp.store.DatagridServerGroupStore": [],
   "webapp.store.DomainStore": [],
   "webapp.store.MachineStore": [],
@@ -911,6 +913,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.view.TomcatInstanceContainer": [],
   "webapp.view.TomcatInstanceWindow": [],
   "webapp.view.UserMntContainer": [],
+  "webapp.view.UserRoleWindow": [],
   "webapp.view.UserWindow": [],
   "webapp.view.dashboardPanel": [],
   "webapp.view.loginWindow": [],
@@ -1927,7 +1930,7 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "console.view.Viewport": [],
   "webapp.controller.ApplicationController": [],
-  "webapp.controller.CluteringConfigurationController": [],
+  "webapp.controller.ClusteringConfigurationController": [],
   "webapp.controller.DatasourceController": [],
   "webapp.controller.DomainController": [],
   "webapp.controller.LoginController": [],
@@ -1940,6 +1943,7 @@ Ext.ClassManager.addNameAliasMappings({
   "webapp.controller.footerController": [],
   "webapp.controller.globalController": [],
   "webapp.controller.headerController": [],
+  "webapp.model.ApplicationModel": [],
   "webapp.model.DatagridServerGroupModel": [],
   "webapp.model.DomainModel": [],
   "webapp.model.MachineModel": [],
@@ -1949,6 +1953,7 @@ Ext.ClassManager.addNameAliasMappings({
     "model.UserModel"
   ],
   "webapp.model.UserRoleModel": [],
+  "webapp.store.ApplicationStore": [],
   "webapp.store.DatagridServerGroupStore": [],
   "webapp.store.DomainStore": [],
   "webapp.store.MachineStore": [],
@@ -2006,6 +2011,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "webapp.view.UserMntContainer": [
     "widget.usermntcontainer"
+  ],
+  "webapp.view.UserRoleWindow": [
+    "widget.UserRoleWindow"
   ],
   "webapp.view.UserWindow": [
     "widget.UserWindow"

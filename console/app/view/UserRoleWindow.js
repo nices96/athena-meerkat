@@ -15,20 +15,17 @@
 
 Ext.define('webapp.view.UserRoleWindow', {
     extend: 'Ext.window.Window',
+    alias: 'widget.UserRoleWindow',
 
     requires: [
         'Ext.form.Panel',
         'Ext.form.field.Text',
         'Ext.form.field.Hidden',
-        'Ext.tree.Panel',
-        'Ext.tree.View',
-        'Ext.tree.Column',
-        'Ext.grid.column.CheckColumn',
         'Ext.button.Button'
     ],
 
-    height: 485,
-    id: 'UserWindow1',
+    height: 124,
+    id: 'UserRoleWindow',
     width: 440,
     autoScroll: true,
     layout: 'fit',
@@ -42,7 +39,7 @@ Ext.define('webapp.view.UserRoleWindow', {
                 {
                     xtype: 'form',
                     height: 260,
-                    id: 'userForm1',
+                    id: 'userRoleForm',
                     bodyPadding: 10,
                     frameHeader: false,
                     header: false,
@@ -54,11 +51,11 @@ Ext.define('webapp.view.UserRoleWindow', {
                     items: [
                         {
                             xtype: 'textfield',
-                            id: 'userIDTextField1',
-                            itemId: 'userIDTextField',
+                            id: 'userRoleNameTextField',
+                            itemId: 'userRoleNameTextField',
                             width: 388,
                             fieldLabel: 'User Role',
-                            name: 'UserIDTextField',
+                            name: 'UserRoleNameTextField',
                             allowBlank: false,
                             allowOnlyWhitespace: false,
                             emptyText: '',
@@ -68,47 +65,13 @@ Ext.define('webapp.view.UserRoleWindow', {
                             xtype: 'hiddenfield',
                             fieldLabel: 'Label',
                             name: 'IDHiddenField'
-                        },
-                        {
-                            xtype: 'container',
-                            layout: 'fit',
-                            items: [
-                                {
-                                    xtype: 'treepanel',
-                                    height: 554,
-                                    width: 400,
-                                    title: 'Permission',
-                                    store: 'MenuTreeStore',
-                                    viewConfig: {
-                                        rootVisible: false
-                                    },
-                                    columns: [
-                                        {
-                                            xtype: 'treecolumn',
-                                            dataIndex: 'text',
-                                            text: 'Nodes',
-                                            flex: 1
-                                        },
-                                        {
-                                            xtype: 'checkcolumn',
-                                            dataIndex: 'value',
-                                            text: 'Value'
-                                        },
-                                        {
-                                            xtype: 'checkcolumn',
-                                            dataIndex: 'value',
-                                            text: 'Value'
-                                        }
-                                    ]
-                                }
-                            ]
                         }
                     ],
                     dockedItems: [
                         {
                             xtype: 'container',
-                            dock: 'bottom',
                             flex: 0.5,
+                            dock: 'bottom',
                             height: 38,
                             layout: {
                                 type: 'hbox',
@@ -125,8 +88,8 @@ Ext.define('webapp.view.UserRoleWindow', {
                                 {
                                     xtype: 'button',
                                     margins: '10 10 10 10',
-                                    id: 'btnSubmit1',
-                                    itemId: 'btnSubmit',
+                                    id: 'btnUserRoleSubmit',
+                                    itemId: 'btnUserRoleSubmit',
                                     text: 'Create'
                                 },
                                 {

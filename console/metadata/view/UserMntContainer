@@ -105,7 +105,7 @@
                                     },
                                     "codeClass": null,
                                     "userConfig": {
-                                        "dataIndex": "userRoleName",
+                                        "dataIndex": "userRoleString",
                                         "text": "User Role"
                                     },
                                     "name": "MyColumn25",
@@ -265,7 +265,7 @@
                                     },
                                     "codeClass": null,
                                     "userConfig": {
-                                        "fn": "onGridpanelItemContextMenu",
+                                        "fn": "onGridpanelUserContextMenu",
                                         "implHandler": [
                                             "var mnuContext = Ext.create(\"Ext.menu.Menu\",{",
                                             "",
@@ -302,13 +302,12 @@
                                             "});",
                                             "",
                                             "mnuContext.showAt(e.getXY());",
-                                            "e.stopEvent();",
-                                            ""
+                                            "e.stopEvent();"
                                         ],
                                         "name": "itemcontextmenu",
                                         "scope": "me"
                                     },
-                                    "name": "onGridpanelItemContextMenu",
+                                    "name": "onGridpanelUserContextMenu",
                                     "designerId": "d89156f6-bd08-4e13-9bc4-9a63d91ef231"
                                 }
                             ]
@@ -350,7 +349,7 @@
                                 "height": 349,
                                 "margin": "5 0 0 0 ",
                                 "store": "UserRoleStore",
-                                "title": "User Role"
+                                "title": ""
                             },
                             "name": "MyGridPanel21",
                             "designerId": "07a6a734-7a4b-4970-84c1-a3aadcefa7ae",
@@ -424,80 +423,90 @@
                                             "designerId": "f2d02e21-d78d-4969-a250-e08f641d4144"
                                         }
                                     ]
-                                }
-                            ]
-                        },
-                        {
-                            "type": "Ext.tree.Panel",
-                            "reference": {
-                                "name": "items",
-                                "type": "array"
-                            },
-                            "codeClass": null,
-                            "userConfig": {
-                                "forceFit": true,
-                                "height": 342,
-                                "title": "Permission",
-                                "width": 1112
-                            },
-                            "name": "TreeGrid",
-                            "designerId": "3f4ea880-0da1-41c5-b7f4-f2cd2e644950",
-                            "isBuiltIn": true,
-                            "iconCls": "icon-treegridpanel",
-                            "autoName": "TreeGrid",
-                            "cn": [
-                                {
-                                    "type": "Ext.tree.View",
-                                    "reference": {
-                                        "name": "viewConfig",
-                                        "type": "object"
-                                    },
-                                    "codeClass": null,
-                                    "name": "MyTreeView2",
-                                    "designerId": "a76ce221-2aac-41b7-ab6f-a28a8a17549f"
                                 },
                                 {
-                                    "type": "Ext.tree.Column",
+                                    "type": "Ext.toolbar.Toolbar",
                                     "reference": {
-                                        "name": "columns",
+                                        "name": "dockedItems",
                                         "type": "array"
                                     },
                                     "codeClass": null,
                                     "userConfig": {
-                                        "dataIndex": "text",
-                                        "flex": 1,
-                                        "text": "Menu"
+                                        "dock": "top"
                                     },
-                                    "name": "MyTreeColumn1",
-                                    "designerId": "72fb0d44-a66d-4d08-b3b7-5da3cd2e1b26"
+                                    "name": "MyToolbar33",
+                                    "designerId": "871a581a-729b-4e98-b558-3434b8273bb2",
+                                    "cn": [
+                                        {
+                                            "type": "Ext.button.Button",
+                                            "reference": {
+                                                "name": "items",
+                                                "type": "array"
+                                            },
+                                            "codeClass": null,
+                                            "userConfig": {
+                                                "id": "userRoleCreateBtn",
+                                                "layout|flex": null,
+                                                "text": "New"
+                                            },
+                                            "name": "MyButton66",
+                                            "designerId": "65650c3b-ed5f-4034-a9c8-26f8fee3b544"
+                                        }
+                                    ]
                                 },
                                 {
-                                    "type": "Ext.grid.column.CheckColumn",
+                                    "type": "basiceventbinding",
                                     "reference": {
-                                        "name": "columns",
+                                        "name": "listeners",
                                         "type": "array"
                                     },
                                     "codeClass": null,
                                     "userConfig": {
-                                        "dataIndex": "value",
-                                        "text": "Read"
+                                        "fn": "onGridpanelUserRoleContextMenu",
+                                        "implHandler": [
+                                            "var mnuContext = Ext.create(\"Ext.menu.Menu\",{",
+                                            "",
+                                            "    items: [{",
+                                            "        id: 'edit-user-role',",
+                                            "        text: 'Edit'",
+                                            "    },",
+                                            "    {",
+                                            "        id: 'delete-user-role',",
+                                            "        text: 'Delete'",
+                                            "    }",
+                                            "           ],",
+                                            "    listeners: {",
+                                            "",
+                                            "        click: function( _menu, _item, _e, _eOpts ) {",
+                                            "           switch (_item.id) {",
+                                            "                case 'edit-user-role':",
+                                            "                   webapp.app.getController(\"UserController\").showUserRoleWindow(record.get(\"id\"),\"edit\");",
+                                            "                    break;",
+                                            "                case 'delete-user-role':",
+                                            "                    webapp.app.getController(\"UserController\").deleteUserRole(record.get(\"id\"));",
+                                            "                    break;",
+                                            "                default:",
+                                            "                    break;",
+                                            "           }",
+                                            "        },",
+                                            "        hide:function(menu){",
+                                            "            menu.destroy();",
+                                            "        }",
+                                            "    },",
+                                            "    defaults: {",
+                                            "       clickHideDelay: 1",
+                                            "    }",
+                                            "});",
+                                            "",
+                                            "mnuContext.showAt(e.getXY());",
+                                            "e.stopEvent();",
+                                            ""
+                                        ],
+                                        "name": "itemcontextmenu",
+                                        "scope": "me"
                                     },
-                                    "name": "MyCheckColumn",
-                                    "designerId": "0abf8d59-44e4-4f80-874f-547bee401717"
-                                },
-                                {
-                                    "type": "Ext.grid.column.CheckColumn",
-                                    "reference": {
-                                        "name": "columns",
-                                        "type": "array"
-                                    },
-                                    "codeClass": null,
-                                    "userConfig": {
-                                        "dataIndex": "value",
-                                        "text": "Write"
-                                    },
-                                    "name": "MyCheckColumn1",
-                                    "designerId": "dd6e2482-af5a-48aa-b409-ebc101e70592"
+                                    "name": "onGridpanelUserRoleContextMenu",
+                                    "designerId": "88fb7794-0758-4664-9e7a-48d99782e9e3"
                                 }
                             ]
                         }

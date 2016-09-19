@@ -57,7 +57,7 @@ Ext.define('webapp.controller.UserController', {
 
         }
 
-        this.save({"id" : _idVal, "userName" : userNameVal,"password" : passwordVal, "fullName" : fullNameVal, "email":emailVal, "userRole":userRoleVal});
+        this.save({"id" : _idVal, "username" : userNameVal,"password" : passwordVal, "fullName" : fullNameVal, "email":emailVal, "userRole":userRoleVal});
 
 
 
@@ -68,13 +68,41 @@ Ext.define('webapp.controller.UserController', {
         var url = GlobalData.urlPrefix + "user/search";
         Ext.Ajax.request({
              url: url,
-            params: {"userID":newValue},
+            params: {"userName":newValue},
              success: function(resp, ops) {
 
                     var response = Ext.decode(resp.responseText);
                     Ext.getStore("UserStore").loadData(response, false);
              }
             });
+    },
+
+    onUserRoleCreateBtnClick: function(button, e, eOpts) {
+        this.showUserRoleWindow(0,"add");
+    },
+
+    onBtnUserRoleSubmitClick: function(button, e, eOpts) {
+        var form = Ext.getCmp("userRoleForm");			// user form
+        var formWindow = Ext.getCmp('UserRoleWindow');	// Add user window
+
+        var userRoleName = form.getForm().findField("userRoleNameTextField");
+        var _id = form.getForm().findField("IDHiddenField");
+
+        var userRoleNameVal = userRoleName.getValue().trim();
+        var _idVal = _id.getValue();
+
+        if (!this.validateUserRole(userRoleNameVal)) {
+            return;
+        }
+
+        //submit new user request
+        if (_idVal === "") {
+            _idVal = 0;
+
+        }
+
+        this.saveUserRole({"id" : _idVal, "name" : userRoleNameVal});
+
     },
 
     showUserWindow: function(type, user_id) {
@@ -101,7 +129,7 @@ Ext.define('webapp.controller.UserController', {
                         userName.setValue(response.username);
                         fullName.setValue(response.fullName);
                         email.setValue(response.email);
-                        userRole.setValue(response.userRole.id);
+                        userRole.setValue(response.userRoleId);
                         _id.setValue(user_id);
                     }
                 });
@@ -137,6 +165,19 @@ Ext.define('webapp.controller.UserController', {
         return true;
     },
 
+    validateUserRole: function(name) {
+        if (name === ""){
+            Ext.Msg.show({
+                title: "Message",
+                msg: "Invalid data.",
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.WARNING
+            });
+            return false;
+        }
+        return true;
+    },
+
     save: function(params) {
         var url = GlobalData.urlPrefix + "user/save";
         var userWindow = Ext.getCmp('UserWindow');	// Add user window
@@ -148,6 +189,7 @@ Ext.define('webapp.controller.UserController', {
                     var response = Ext.decode(resp.responseText);
                     if(response===true){
                         Ext.getStore("UserStore").reload();
+                        Ext.getStore("UserRoleStore").reload();
                         userWindow.close();
                     }
                     else {
@@ -195,6 +237,92 @@ Ext.define('webapp.controller.UserController', {
          });
     },
 
+    showUserRoleWindow: function(id, type) {
+        var userRoleWindow = Ext.create("widget.UserRoleWindow");
+        var submitButton = Ext.getCmp("btnUserRoleSubmit");
+        if (type === "edit"){
+            userRoleWindow.setTitle("Edit User Role");
+            submitButton.setText("Save");
+            var form = Ext.getCmp("userRoleForm");			// user role form
+
+            var userRoleName = form.getForm().findField("UserRoleNameTextField");
+            var _id = form.getForm().findField("IDHiddenField");
+            //load data to user form
+
+             Ext.Ajax.request({
+                    url: GlobalData.urlPrefix + "user/role/edit",
+                    params: {"id":id},
+                    success: function(resp, ops) {
+                        var response = Ext.decode(resp.responseText);
+                        userRoleName.setValue(response.name);
+                        _id.setValue(id);
+                    }
+                });
+
+        }
+
+        userRoleWindow.show();
+    },
+
+    saveUserRole: function(params) {
+        var url = GlobalData.urlPrefix + "user/role/save";
+        var userRoleWindow =Ext.getCmp("UserRoleWindow");	// Add user role window
+        Ext.Ajax.request({
+             url: url,
+             params: params,
+             success: function(resp, ops) {
+
+                    var response = Ext.decode(resp.responseText);
+                    if(response===true){
+                        Ext.getStore("UserRoleStore").reload();
+                        Ext.getStore("UserStore").reload();
+                        userRoleWindow.close();
+                    }
+                    else {
+                             Ext.Msg.show({
+                                title: "Message",
+                                msg: "Invalid information.",
+                                buttons: Ext.Msg.OK,
+                                icon: Ext.Msg.WARNING
+                            });
+                    }
+
+                }
+            });
+
+    },
+
+    deleteUserRole: function(id) {
+         Ext.MessageBox.confirm('Confirm', 'Are you sure you want to delete this role?', function(btn){
+
+             if(btn == "yes"){
+                Ext.Ajax.request({
+                    url: GlobalData.urlPrefix+ "/user/role/delete",
+                    params: {"id":id},
+                    success: function(resp, ops) {
+
+                        var response = Ext.decode(resp.responseText);
+                        if(response===true){
+                            Ext.getStore("UserRoleStore").reload();
+                            Ext.getStore("UserStore").reload();
+                        }
+                        else {
+                            Ext.Msg.show({
+                                title: "Message",
+                                msg: "User role is not existed",
+                                buttons: Ext.Msg.OK,
+                                icon: Ext.Msg.WARNING
+                            });
+                        }
+
+                    }
+                });
+
+
+             }
+         });
+    },
+
     init: function(application) {
         this.control({
             "#createBtn": {
@@ -208,6 +336,12 @@ Ext.define('webapp.controller.UserController', {
             },
             "#mytextfield": {
                 change: this.onTextfieldChange
+            },
+            "#userRoleCreateBtn": {
+                click: this.onUserRoleCreateBtnClick
+            },
+            "#btnUserRoleSubmit": {
+                click: this.onBtnUserRoleSubmitClick
             }
         });
     }

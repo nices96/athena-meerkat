@@ -86,14 +86,10 @@ public class UserController {
 	@ResponseBody
 	public SimpleJsonResponse onAfterLogin(SimpleJsonResponse jsonRes) {
 
-		jsonRes.setData(SecurityContextHolder.getContext().getAuthentication()
-				.getPrincipal());
-		System.out.println(SecurityContextHolder.getContext()
-				.getAuthentication().getPrincipal());
-		/*
-		 * if(userDetails != null){
-		 * service.updateLastLogon(userDetails.getUserId()); }
-		 */
+		User loginUser = (User) SecurityContextHolder.getContext()
+				.getAuthentication().getPrincipal();
+		jsonRes.setData(loginUser);
+		service.updateLastLogin(loginUser.getId());
 		return jsonRes;
 	}
 
@@ -145,38 +141,36 @@ public class UserController {
 
 	@RequestMapping("/save")
 	@ResponseBody
-	public boolean saveUser(int id, String userName, String password, String fullName, String email, int userRole) {
+	public boolean saveUser(User user) {
 		User currentUser = null;
-		if (id > 0) {
-			currentUser = service.findUser(id);
+		if (user.getId() > 0) {
+			currentUser = service.findUser(user.getId());
 		}
 		// check existing users by userID and email
-		
-		/*
-		List<User> existingUsers = service.getUser(userName, email);
-		if (existingUsers.size() > 1) {
-			return false;
-		}
-		if (existingUsers.size() == 1) {
-			if (existingUsers.get(0).getId() != id) {
+
+		User existingUser = service
+				.getUser(user.getUsername(), user.getEmail());
+		if (existingUser != null) {
+			if (existingUser.getId() != user.getId()) {
 				return false;
 			}
 		}
-		*/
-		
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		UserRole role = service.getUserRole(userRole);
+
+		// BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		UserRole role = service.getUserRole(user.getUserRoleId());
 		if (currentUser == null) {
-			currentUser = new User(userName, fullName,
-					encoder.encode(password), email, role);
+			// currentUser = new User(userName, fullName,
+			// encoder.encode(password), email, role);
+			currentUser = user;
+			currentUser.setCreatedDate(new Date());
 		} else {
-			currentUser.setUsername(userName);
-			currentUser.setPassword(encoder.encode(password));
-			currentUser.setFullName(fullName);
-			currentUser.setEmail(email);
+			currentUser.setUsername(user.getUsername());
+			// currentUser.setPassword(encoder.encode(password));
+			currentUser.setPassword(user.getPassword());
+			currentUser.setFullName(user.getFullName());
+			currentUser.setEmail(user.getEmail());
 			currentUser.setUserRole(role);
 		}
-
 		if (service.saveUser(currentUser) != null) {
 			return true;
 		}
@@ -205,6 +199,52 @@ public class UserController {
 		} else {
 			return false;
 		}
+
+	}
+
+	@RequestMapping("/role/delete")
+	@ResponseBody
+	public boolean deleteRole(int id) {
+		UserRole userRole = service.getUserRole(id);
+		if (userRole != null) {
+			service.deleteUserRole(userRole);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@RequestMapping("/role/edit")
+	@ResponseBody
+	public UserRole editUserRole(int id) {
+		return service.getUserRole(id);
+	}
+
+	@RequestMapping("/role/save")
+	@ResponseBody
+	public boolean saveUserRole(UserRole userRole) {
+		UserRole role = null;
+		if (userRole.getId() > 0) { // edit
+			role = service.getUserRole(userRole.getId());
+		}
+		// check existing user role by name
+
+		UserRole existingRole = service.getUserRole(userRole.getName());
+		if (existingRole != null) {
+			if (existingRole.getId() != userRole.getId()) {
+				return false;
+			}
+		}
+
+		if (role == null) {
+			role = userRole;
+		} else {
+			role.setName(userRole.getName());
+		}
+		if (service.saveUserRole(role) != null) {
+			return true;
+		}
+		return false;
 
 	}
 }

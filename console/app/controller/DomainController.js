@@ -146,17 +146,27 @@ Ext.define('webapp.controller.DomainController', {
                 domainTypeField.setValue(response.clustering===true?"Clustering":"None clustering");
                 dataGridServerGroupField.setValue(response.datagridServerGroupName);
                 Ext.getCmp("associatedTomcatListView").getStore().loadData(response.tomcats, false);
-                if (response.tomcats.length > 0 ){
-                  Ext.getCmp("associatedApplicationListView").getStore().loadData(response.tomcats[0].applications, false);
-                }
 
                 //hide/show clustering config tab
-                //if (response.clustering) {
-        //            Ext.getCmp("domainTabs").child("#clusteringConfigTab").tab.show();
-        //        }
-        //        else {
-                //          Ext.getCmp("domainTabs").child("#clusteringConfigTab").tab.hide();
-        //      }
+                if (response.clustering) {
+                    Ext.getCmp("domainTabs").child("#clusteringConfigTab").tab.show();
+                }
+                else {
+                    Ext.getCmp("domainTabs").child("#clusteringConfigTab").tab.hide();
+                }
+            }
+
+        });
+        //get application list for each domain
+
+        Ext.Ajax.request({
+            url: GlobalData.urlPrefix + "domain/applications",
+            params: {"domainId":domainId},
+            method:'GET',
+            success: function(resp, ops) {
+                var response = Ext.decode(resp.responseText);
+                Ext.getCmp("associatedApplicationListView").getStore().loadData(response, false);
+
             }
 
         });

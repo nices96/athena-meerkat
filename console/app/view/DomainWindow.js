@@ -23,19 +23,15 @@ Ext.define('webapp.view.DomainWindow', {
         'Ext.form.field.Radio',
         'Ext.form.field.ComboBox',
         'Ext.form.field.Hidden',
-        'Ext.grid.Panel',
-        'Ext.grid.column.Number',
-        'Ext.grid.View',
-        'Ext.grid.plugin.RowEditing',
-        'Ext.toolbar.Toolbar',
         'Ext.button.Button'
     ],
 
-    height: 435,
+    height: 193,
     id: 'domainWindow',
     width: 440,
     layout: 'fit',
     title: 'New Domain',
+    modal: true,
 
     initComponent: function() {
         var me = this;
@@ -117,42 +113,6 @@ Ext.define('webapp.view.DomainWindow', {
                             name: 'IDHiddenField'
                         },
                         {
-                            xtype: 'gridpanel',
-                            height: 230,
-                            id: 'domainClusteringConfigurationGridView',
-                            title: 'Clustering Configuration',
-                            forceFit: true,
-                            columns: [
-                                {
-                                    xtype: 'gridcolumn',
-                                    dataIndex: 'string',
-                                    text: 'Name'
-                                },
-                                {
-                                    xtype: 'numbercolumn',
-                                    dataIndex: 'number',
-                                    text: 'Value'
-                                }
-                            ],
-                            plugins: [
-                                Ext.create('Ext.grid.plugin.RowEditing', {
-
-                                })
-                            ],
-                            dockedItems: [
-                                {
-                                    xtype: 'toolbar',
-                                    dock: 'top',
-                                    items: [
-                                        {
-                                            xtype: 'button',
-                                            text: 'New'
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
                             xtype: 'container',
                             height: 38,
                             layout: {
@@ -197,23 +157,17 @@ Ext.define('webapp.view.DomainWindow', {
     },
 
     onDomainTypeClusteringChange: function(field, newValue, oldValue, eOpts) {
-        //alert(newValue);
-        //Ext.getCmp("domainClusteringConfigurationGridView").show();
-        //alert(newValue);
-        var grid =  Ext.getCmp("domainClusteringConfigurationGridView");
-
-        //else{
-        //   Ext.getCmp("domainClusteringConfigurationGridView").hide();
-        //}
-        if(grid.isVisible()){
-           grid.hide();
+        var comboBox = Ext.getCmp("dataGridServerGroupComboBoxField");
+        if (comboBox.isVisible()){
+            comboBox.hide();
         }
+
     },
 
     onDomainTypeNoneClusteringChange: function(field, newValue, oldValue, eOpts) {
-        var grid =  Ext.getCmp("domainClusteringConfigurationGridView");
-        if(!grid.isVisible()){
-           grid.show();
+        var comboBox = Ext.getCmp("dataGridServerGroupComboBoxField");
+        if (comboBox.isHidden){
+            comboBox.show();
         }
     }
 

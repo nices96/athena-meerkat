@@ -217,6 +217,7 @@ Ext.define('webapp.controller.MenuController', {
             activeItem = 0;
         }else if (menuId.indexOf("tomcatMng_domain_") >=0 && menuId.indexOf("_tomcat_") < 0) {
             objectId = menuId.substr(menuId.indexOf("tomcatMng_domain_")+ "tomcatMng_domain_".length );
+            GlobalData.lastSelectedMenuId = objectId;
             webapp.app.getController("DomainController").loadDomainInfo(objectId);
             activeItem = 1;
         }else if (menuId.indexOf("tomcatMng_domain_") >=0 && menuId.indexOf("_tomcat_") >= 0) {
@@ -305,8 +306,8 @@ Ext.define('webapp.controller.MenuController', {
             method: "GET",
             success: function(resp, ops) {
                 var response = Ext.decode(resp.responseText);
-                for(i = 0; i < response.length; i ++){
-                    parentNode.appendChild({"text":response[i].name, "menuId": prefix_child_menu_id + response[i].id, "leaf": is_child_leaf,"expanded":!is_child_leaf});
+                for(i = 0; i < response.data.length; i ++){
+                    parentNode.appendChild({"text":response.data[i].name, "menuId": prefix_child_menu_id + response.data[i].id, "leaf": is_child_leaf,"expanded":!is_child_leaf});
                 }
             }
         });

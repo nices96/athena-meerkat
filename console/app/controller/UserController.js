@@ -47,7 +47,7 @@ Ext.define('webapp.controller.UserController', {
         var userRoleVal = userRole.getValue();
         var _idVal = _id.getValue();
 
-        if (!this.validate(userNameVal, passwordVal, retypePasswordVal, fullNameVal, emailVal, userRoleVal)) {
+        if (!this.validate(userName, password, retypePassword, fullName, email, userRole)) {
             return;
         }
 
@@ -63,21 +63,18 @@ Ext.define('webapp.controller.UserController', {
 
     },
 
-    onTextfieldSpecialkey: function(field, e, eOpts) {
-        if (e.getKey()===e.ENTER){
-            var store = Ext.getStore("UserStore");
-            var url = GlobalData.urlPrefix + "user/search";
-            Ext.Ajax.request({
-                url: url,
-                params: {"userName":field.getValue()},
-                success: function(resp, ops) {
+    onTextfieldChange: function(field, newValue, oldValue, eOpts) {
+        var store = Ext.getStore("UserStore");
+        var url = GlobalData.urlPrefix + "user/search";
+        Ext.Ajax.request({
+             url: url,
+            params: {"userName":newValue},
+             success: function(resp, ops) {
+
                     var response = Ext.decode(resp.responseText);
                     Ext.getStore("UserStore").loadData(response, false);
-                    Ext.getStore("UserStore").totalCount = response.length;
-                    Ext.getCmp("userListPaging").onLoad();
-                }
+             }
             });
-        }
     },
 
     onUserRoleCreateBtnClick: function(button, e, eOpts) {
@@ -122,6 +119,8 @@ Ext.define('webapp.controller.UserController', {
             var email = form.getForm().findField("EmailTextField");
             var userRole = form.getForm().findField("UserRoleDropdownList");
             var _id = form.getForm().findField("IDHiddenField");
+            //used ID cannot be editted.
+            userName.setReadOnly(true);
             //load data to user form
 
              Ext.Ajax.request({
@@ -143,20 +142,22 @@ Ext.define('webapp.controller.UserController', {
     },
 
     validate: function(userName, password, retype_password, fullName, email, userRole) {
-        if (password !== retype_password){
+        if(password.getValue()!== retype_password.getValue()){
             Ext.Msg.show({
-                title: "Message",
-                msg: "Password and Retype password are not match.",
-                buttons: Ext.Msg.OK,
-                fn: function(choice) {
-                    password.focus();
-                },
-                icon: Ext.Msg.WARNING
-            });
+                        title: "Message",
+                        msg: "Retype password not match.",
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.WARNING
+                    });
+            retype_password.addCls("x-form-empty-field");
+            retype_password.setActiveError("Password not match");
             return false;
         }
+        else{
+            retype_password.removeCls("x-form-empty-field");
+        }
 
-        if (userName === "" || password === "" || retype_password === ""||fullName === "" ||email === ""||userRole < 0){
+        if (!(userName.isValid()  && password.isValid() && retype_password.isValid() && fullName.isValid() && email.isValid() && userRole.getValue() > 0)){
             Ext.Msg.show({
                 title: "Message",
                 msg: "Invalid data.",
@@ -338,7 +339,7 @@ Ext.define('webapp.controller.UserController', {
                 click: this.onSubmitButtonClick
             },
             "#mytextfield": {
-                specialkey: this.onTextfieldSpecialkey
+                change: this.onTextfieldChange
             },
             "#userRoleCreateBtn": {
                 click: this.onUserRoleCreateBtnClick

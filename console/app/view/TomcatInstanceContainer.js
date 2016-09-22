@@ -19,7 +19,8 @@ Ext.define('webapp.view.TomcatInstanceContainer', {
 
     requires: [
         'Ext.form.field.Display',
-        'Ext.button.Button',
+        'Ext.tab.Panel',
+        'Ext.tab.Tab',
         'Ext.grid.Panel',
         'Ext.grid.column.Number',
         'Ext.grid.column.Date',
@@ -49,48 +50,62 @@ Ext.define('webapp.view.TomcatInstanceContainer', {
                     items: [
                         {
                             xtype: 'displayfield',
-                            width: 164,
-                            fieldLabel: 'Host name:',
-                            value: 'Tomcat 1'
+                            id: 'tomcatNameField',
+                            width: 150,
+                            fieldLabel: 'Name',
+                            labelWidth: 50,
+                            value: ''
                         },
                         {
                             xtype: 'displayfield',
-                            width: 249,
+                            id: 'tomcatStateField',
+                            width: 150,
                             fieldLabel: 'Status',
-                            value: 'Started'
+                            labelWidth: 50,
+                            value: ''
                         },
                         {
                             xtype: 'displayfield',
-                            width: 249,
+                            id: 'tomcatIPAddField',
+                            width: 200,
                             fieldLabel: 'IP Address',
-                            value: '192.168.0.83'
+                            labelWidth: 80,
+                            value: ''
                         },
                         {
                             xtype: 'displayfield',
-                            width: 249,
+                            id: 'tomcatPortField',
+                            width: 200,
                             fieldLabel: 'Ports:',
-                            value: '{HTTP 1.1: 8080, AJP: 8009, redirect: 8443}'
+                            labelWidth: 50,
+                            value: ''
                         },
                         {
                             xtype: 'displayfield',
-                            width: 164,
+                            id: 'tomcatWebServerField',
+                            width: 200,
                             fieldLabel: 'Web server',
-                            value: 'Apache Tomcat / 7.0.47'
+                            value: ''
                         },
                         {
                             xtype: 'displayfield',
+                            id: 'tomcatJVMVersionField',
                             width: 164,
                             fieldLabel: 'JVM Version',
-                            value: '1.7.0_45-b18'
+                            labelWidth: 80,
+                            value: ''
                         },
                         {
                             xtype: 'displayfield',
+                            id: 'tomcatOSField',
                             width: 164,
                             fieldLabel: 'OS Name',
+                            labelWidth: 80,
                             value: 'Linux'
                         },
                         {
                             xtype: 'displayfield',
+                            id: 'tomcatDomainField',
                             width: 164,
                             fieldLabel: 'Domain',
                             value: 'Domain 1'
@@ -104,14 +119,18 @@ Ext.define('webapp.view.TomcatInstanceContainer', {
                                 {
                                     xtype: 'button',
                                     disabled: true,
+                                    id: 'btnTomcatStart',
                                     text: 'Start'
                                 },
                                 {
                                     xtype: 'button',
+                                    id: 'btnTomcatStop',
+                                    itemId: '',
                                     text: 'Stop'
                                 },
                                 {
                                     xtype: 'button',
+                                    id: 'btnTomcatRestart',
                                     text: 'Restart'
                                 }
                             ]
@@ -119,61 +138,77 @@ Ext.define('webapp.view.TomcatInstanceContainer', {
                     ]
                 },
                 {
-                    xtype: 'gridpanel',
+                    xtype: 'tabpanel',
                     flex: 7,
                     region: 'center',
-                    margin: '5 0 0 0 ',
-                    title: 'Data sources',
-                    forceFit: true,
-                    columns: [
+                    activeTab: 0,
+                    items: [
                         {
-                            xtype: 'gridcolumn',
-                            dataIndex: 'string',
-                            text: 'Name'
-                        },
-                        {
-                            xtype: 'numbercolumn',
-                            dataIndex: 'number',
-                            text: 'JDBC URL'
-                        },
-                        {
-                            xtype: 'datecolumn',
-                            dataIndex: 'date',
-                            text: 'Servers'
-                        },
-                        {
-                            xtype: 'booleancolumn',
-                            dataIndex: 'bool',
-                            text: 'Min Connection Pool'
-                        },
-                        {
-                            xtype: 'booleancolumn',
-                            dataIndex: 'bool',
-                            text: 'Max Connection Pool'
-                        },
-                        {
-                            xtype: 'booleancolumn',
-                            dataIndex: 'bool',
-                            text: 'Timeout'
-                        }
-                    ],
-                    dockedItems: [
-                        {
-                            xtype: 'pagingtoolbar',
-                            dock: 'bottom',
-                            width: 360,
-                            displayInfo: true
-                        },
-                        {
-                            xtype: 'toolbar',
-                            dock: 'top',
+                            xtype: 'panel',
+                            title: 'Data sources',
                             items: [
                                 {
-                                    xtype: 'button',
-                                    id: 'btnLinkNewDatasource',
-                                    text: 'Link new Datasource'
+                                    xtype: 'gridpanel',
+                                    margin: '5 0 0 0 ',
+                                    title: '',
+                                    forceFit: true,
+                                    columns: [
+                                        {
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'string',
+                                            text: 'Name'
+                                        },
+                                        {
+                                            xtype: 'numbercolumn',
+                                            dataIndex: 'number',
+                                            text: 'JDBC URL'
+                                        },
+                                        {
+                                            xtype: 'datecolumn',
+                                            dataIndex: 'date',
+                                            text: 'Servers'
+                                        },
+                                        {
+                                            xtype: 'booleancolumn',
+                                            dataIndex: 'bool',
+                                            text: 'Min Connection Pool'
+                                        },
+                                        {
+                                            xtype: 'booleancolumn',
+                                            dataIndex: 'bool',
+                                            text: 'Max Connection Pool'
+                                        },
+                                        {
+                                            xtype: 'booleancolumn',
+                                            dataIndex: 'bool',
+                                            text: 'Timeout'
+                                        }
+                                    ],
+                                    dockedItems: [
+                                        {
+                                            xtype: 'pagingtoolbar',
+                                            dock: 'bottom',
+                                            width: 360,
+                                            displayInfo: true
+                                        },
+                                        {
+                                            xtype: 'toolbar',
+                                            dock: 'top',
+                                            items: [
+                                                {
+                                                    xtype: 'button',
+                                                    id: 'btnLinkNewDatasource',
+                                                    text: 'Link new Datasource'
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ]
+                        },
+                        {
+                            xtype: 'panel',
+                            title: 'Applications'
                         }
                     ]
                 }

@@ -38,6 +38,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import com.athena.meerkat.controller.MeerkatConstants;
 import com.athena.meerkat.controller.web.application.Application;
 import com.athena.meerkat.controller.web.datasource.Datasource;
@@ -74,6 +77,8 @@ public class TomcatInstance implements Serializable {
 	private int ajpPort;
 	@Column(nullable = false, name = "redirect_port")
 	private int redirectPort;
+	@Column(nullable = false, name = "web_server")
+	private String webServer;
 
 	@ManyToOne
 	// using this annotation to prevent Infinite recursion json mapping
@@ -85,7 +90,7 @@ public class TomcatInstance implements Serializable {
 	@JoinColumn(name = "domain_id")
 	private Domain domain;
 
-	@OneToMany(mappedBy = "tomcat")
+	@OneToMany(mappedBy = "tomcat", fetch = FetchType.LAZY)
 	// using this annotation to prevent Infinite recursion json mapping
 	@JsonManagedReference
 	private Collection<Application> applications;
@@ -197,6 +202,34 @@ public class TomcatInstance implements Serializable {
 		default:
 			return "Unknown";
 		}
+	}
+
+	public String getWebServer() {
+		return webServer;
+	}
+
+	public void setWebServer(String webServer) {
+		this.webServer = webServer;
+	}
+
+	public String getOSName() {
+		if (machine != null) {
+			return machine.getOsName();
+		}
+		return "";
+	}
+
+	public String getJvm() {
+		if (machine != null) {
+			return machine.getJvmVersion();
+		}
+		return "";
+	}
+	public String getDomainName() {
+		if (domain != null) {
+			return domain.getName();
+		}
+		return "";
 	}
 
 }

@@ -27,8 +27,8 @@ Ext.define('webapp.view.DomainContainer', {
         'Ext.grid.View',
         'Ext.grid.column.Number',
         'Ext.grid.column.Date',
-        'Ext.grid.column.Boolean',
-        'Ext.toolbar.Paging'
+        'Ext.toolbar.Paging',
+        'Ext.grid.plugin.RowEditing'
     ],
 
     itemId: 'mycontainer37',
@@ -83,6 +83,19 @@ Ext.define('webapp.view.DomainContainer', {
                             name: 'DataGridServerGroupField',
                             value: 'Group 1'
                         }
+                    ],
+                    dockedItems: [
+                        {
+                            xtype: 'panel',
+                            dock: 'right',
+                            items: [
+                                {
+                                    xtype: 'button',
+                                    itemId: 'mybutton68',
+                                    text: 'Edit'
+                                }
+                            ]
+                        }
                     ]
                 },
                 {
@@ -135,6 +148,7 @@ Ext.define('webapp.view.DomainContainer', {
                             items: [
                                 {
                                     xtype: 'gridpanel',
+                                    id: 'associatedTomcatGridView',
                                     title: '',
                                     forceFit: true,
                                     store: 'TomcatInstanceListStore',
@@ -170,50 +184,48 @@ Ext.define('webapp.view.DomainContainer', {
                             xtype: 'panel',
                             layout: 'fit',
                             title: 'Applications',
-                            dockedItems: [
+                            items: [
                                 {
                                     xtype: 'gridpanel',
-                                    dock: 'top',
                                     id: 'associatedApplicationListView',
                                     title: '',
                                     forceFit: true,
+                                    store: 'ApplicationStore',
                                     columns: [
                                         {
                                             xtype: 'gridcolumn',
-                                            dataIndex: 'string',
-                                            text: 'Path'
+                                            dataIndex: 'contextPath',
+                                            text: 'Context path'
                                         },
                                         {
-                                            xtype: 'numbercolumn',
-                                            dataIndex: 'number',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'displayName',
+                                            text: 'Name'
+                                        },
+                                        {
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'warPath',
+                                            text: '*.war path'
+                                        },
+                                        {
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'version',
                                             text: 'Version'
                                         },
                                         {
-                                            xtype: 'datecolumn',
-                                            dataIndex: 'date',
-                                            text: 'Display name'
-                                        },
-                                        {
-                                            xtype: 'booleancolumn',
-                                            dataIndex: 'bool',
-                                            text: 'Sessions'
-                                        },
-                                        {
-                                            xtype: 'booleancolumn',
-                                            dataIndex: 'bool',
-                                            text: 'Status'
-                                        },
-                                        {
-                                            xtype: 'booleancolumn',
-                                            dataIndex: 'bool',
-                                            text: 'Tomcat instance'
-                                        },
-                                        {
-                                            xtype: 'booleancolumn',
-                                            dataIndex: 'bool',
-                                            text: 'Session Timeout'
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'state',
+                                            text: 'State'
                                         }
                                     ],
+                                    viewConfig: {
+                                        listeners: {
+                                            itemclick: {
+                                                fn: me.onViewItemClick,
+                                                scope: me
+                                            }
+                                        }
+                                    },
                                     dockedItems: [
                                         {
                                             xtype: 'toolbar',
@@ -221,40 +233,36 @@ Ext.define('webapp.view.DomainContainer', {
                                             items: [
                                                 {
                                                     xtype: 'button',
-                                                    id: 'btnDeployWindow',
+                                                    id: 'btnApplicationDeploy',
                                                     text: 'Deploy'
                                                 },
                                                 {
                                                     xtype: 'button',
-                                                    id: 'btnDeployWindow3',
+                                                    disabled: true,
+                                                    id: 'btnApplicationStart',
                                                     text: 'Start'
                                                 },
                                                 {
                                                     xtype: 'button',
-                                                    id: 'btnDeployWindow2',
+                                                    disabled: true,
+                                                    id: 'btnApplicationRestart',
+                                                    text: 'Restart'
+                                                },
+                                                {
+                                                    xtype: 'button',
+                                                    disabled: true,
+                                                    id: 'btnApplicationStop',
                                                     text: 'Stop'
                                                 },
                                                 {
                                                     xtype: 'button',
-                                                    id: 'btnDeployWindow1',
+                                                    disabled: true,
+                                                    id: 'btnApplicationUndeploy',
                                                     text: 'Undeploy'
-                                                },
-                                                {
-                                                    xtype: 'tbseparator'
-                                                },
-                                                {
-                                                    xtype: 'textfield',
-                                                    fieldLabel: 'Filtering'
                                                 }
                                             ]
                                         }
                                     ]
-                                },
-                                {
-                                    xtype: 'pagingtoolbar',
-                                    dock: 'top',
-                                    width: 360,
-                                    displayInfo: true
                                 }
                             ]
                         },
@@ -266,6 +274,7 @@ Ext.define('webapp.view.DomainContainer', {
                                 {
                                     xtype: 'gridpanel',
                                     dock: 'top',
+                                    id: 'domainSessionGridView',
                                     title: '',
                                     forceFit: true,
                                     columns: [
@@ -343,10 +352,6 @@ Ext.define('webapp.view.DomainContainer', {
                                         {
                                             xtype: 'button',
                                             text: 'Set active'
-                                        },
-                                        {
-                                            xtype: 'button',
-                                            text: 'Delete'
                                         }
                                     ]
                                 },
@@ -390,7 +395,12 @@ Ext.define('webapp.view.DomainContainer', {
                                             fn: me.onClusteringConfigurationGridViewItemContextMenu,
                                             scope: me
                                         }
-                                    }
+                                    },
+                                    plugins: [
+                                        Ext.create('Ext.grid.plugin.RowEditing', {
+
+                                        })
+                                    ]
                                 }
                             ]
                         }
@@ -400,6 +410,22 @@ Ext.define('webapp.view.DomainContainer', {
         });
 
         me.callParent(arguments);
+    },
+
+    onViewItemClick: function(dataview, record, item, index, e, eOpts) {
+
+        var status = record.get("state");
+        if(status === 1) { //started
+            Ext.getCmp("btnApplicationStart").disable();
+            Ext.getCmp("btnApplicationStop").enable();
+            Ext.getCmp("btnApplicationRestart").enable();
+            Ext.getCmp("btnApplicationUndeploy").disable();
+        } else if(status  === 2) { //stopped
+            Ext.getCmp("btnApplicationStart").enable();
+            Ext.getCmp("btnApplicationStop").disable();
+            Ext.getCmp("btnApplicationRestart").disable();
+            Ext.getCmp("btnApplicationUndeploy").enable();
+        }
     },
 
     onClusteringConfigurationGridViewItemContextMenu: function(dataview, record, item, index, e, eOpts) {

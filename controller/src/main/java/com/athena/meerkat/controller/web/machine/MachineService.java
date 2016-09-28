@@ -20,11 +20,10 @@ import com.athena.meerkat.controller.common.SSHManager;
  */
 
 @Service
-public class MachineService implements InitializingBean {
-	// public class MachineService {
+public class MachineService {
 	@Autowired
 	private MachineRepository machineRepo;
-
+	
 	public MachineService() {
 
 	}
@@ -83,10 +82,10 @@ public class MachineService implements InitializingBean {
 		return machineRepo.findOne(id);
 	}
 
-	public ServiceResult getList() {
+	public List<Machine> getListByType(int type) {
 
-		List<Machine> list = machineRepo.findAll();
-		return new ServiceResult(Status.DONE, "", list);
+		List<Machine> list = machineRepo.findByMachineServerType(type);
+		return list;
 	}
 
 	/**
@@ -255,15 +254,22 @@ public class MachineService implements InitializingBean {
 		return new ServiceResult(Status.DONE, "", machineRepo.count());
 	}
 
-	// for testing bean creation
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		System.err.println("=====================================");
-		System.err.println("=====================================");
-		System.err.println("=====================================");
-		System.err.println("repo : " + machineRepo);
-		System.err.println("=====================================");
-		System.err.println("=====================================");
-		System.err.println("=====================================");
+	public ServiceResult getList() {
+
+		List<Machine> list = machineRepo.findAll();
+		return new ServiceResult(Status.DONE, "", list);
 	}
+
+	/**
+	 * <pre>
+	 * 
+	 * </pre>
+	 * 
+	 * @param machine
+	 */
+	public Machine save(Machine machine) {
+		// TODO Auto-generated method stub
+		return machineRepo.save(machine);
+	}
+
 }

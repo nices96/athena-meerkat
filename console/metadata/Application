@@ -18,7 +18,9 @@
             "UserController",
             "ApplicationController",
             "CluteringConfigurationController",
-            "DatasourceController"
+            "DatasourceController",
+            "ServerManagementController",
+            "DatagridServerController"
         ],
         "models": [
             "SessionKeyData",
@@ -29,7 +31,10 @@
             "DatagridServerGroupModel",
             "MachineModel",
             "ClusteringConfigurationModel",
-            "DatasourceModel"
+            "DatasourceModel",
+            "DatagridModel",
+            "EnvironmentVariableModel",
+            "RevisionModel"
         ],
         "name": "webapp",
         "requires": [
@@ -48,7 +53,10 @@
             "ClusteringConfigurationStore",
             "ApplicationStore",
             "DatasourceStore",
-            "LinkingTomcatDatasourceStore"
+            "LinkingTomcatDatasourceStore",
+            "DatagridServerStore",
+            "EnvironmentVariableStore",
+            "RevisionStore"
         ],
         "views": [
             "meerkatViewport",
@@ -73,7 +81,8 @@
             "ClusteringConfigurationWindow",
             "ClusteringConfigurationComparingWindow",
             "DomainWindow",
-            "UserRoleWindow"
+            "UserRoleWindow",
+            "EnvironmentVariableWindow"
         ]
     },
     "name": "Application",

@@ -33,7 +33,10 @@ Ext.application({
         'DatagridServerGroupModel',
         'MachineModel',
         'ClusteringConfigurationModel',
-        'DatasourceModel'
+        'DatasourceModel',
+        'DatagridModel',
+        'EnvironmentVariableModel',
+        'RevisionModel'
     ],
     stores: [
         'sessionDataStore',
@@ -48,7 +51,10 @@ Ext.application({
         'ClusteringConfigurationStore',
         'ApplicationStore',
         'DatasourceStore',
-        'LinkingTomcatDatasourceStore'
+        'LinkingTomcatDatasourceStore',
+        'DatagridServerStore',
+        'EnvironmentVariableStore',
+        'RevisionStore'
     ],
     views: [
         'meerkatViewport',
@@ -73,7 +79,8 @@ Ext.application({
         'ClusteringConfigurationWindow',
         'ClusteringConfigurationComparingWindow',
         'DomainWindow',
-        'UserRoleWindow'
+        'UserRoleWindow',
+        'EnvironmentVariableWindow'
     ],
     controllers: [
         'headerController',
@@ -87,7 +94,9 @@ Ext.application({
         'UserController',
         'ApplicationController',
         'CluteringConfigurationController',
-        'DatasourceController'
+        'DatasourceController',
+        'ServerManagementController',
+        'DatagridServerController'
     ],
     name: 'webapp',
 

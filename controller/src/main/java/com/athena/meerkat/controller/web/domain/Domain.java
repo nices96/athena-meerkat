@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -32,6 +34,7 @@ public class Domain implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "Id")
 	private int id;
 	@Column(name = "name")
@@ -43,7 +46,7 @@ public class Domain implements Serializable {
 	@JoinColumn(name = "datagrid_server_group_id")
 	private DatagridServerGroup serverGroup;
 
-	@OneToMany(mappedBy = "domain")
+	@OneToMany(mappedBy = "domain", fetch=FetchType.LAZY)
 	@JsonManagedReference
 	private List<TomcatInstance> tomcats;
 

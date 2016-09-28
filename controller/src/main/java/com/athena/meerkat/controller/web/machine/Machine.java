@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import com.athena.meerkat.controller.web.datagridserver.DatagridServer;
 import com.athena.meerkat.controller.web.env.EnvironmentVariable;
 import com.athena.meerkat.controller.web.tomcat.instance.TomcatInstance;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
@@ -30,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Table(name = "machine")
 public class Machine {
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "Id")
 	private int Id;
 	@Column(name = "name", nullable = false)
@@ -77,6 +79,14 @@ public class Machine {
 	@Column(name = "ssh_ipaddr")
 	private String sshIPAddr;
 
+	@Column(name = "machine_server_type")
+	private int machineServerType;
+
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "datagrid_server_id")
+	@JsonManagedReference
+	private DatagridServer datagridServer;
+
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "machine")
 	// using this annotation to prevent Infinite recursion json mapping
 	@JsonManagedReference
@@ -93,10 +103,6 @@ public class Machine {
 	@OneToMany(mappedBy = "machine")
 	@JsonManagedReference
 	private Collection<TomcatInstance> tomcatInstances;
-
-//	@OneToOne
-//	@JoinColumn(name="datagrid_server_group_id")
-//	private DatagridServer datagridServer;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "machine")
 	private Collection<EnvironmentVariable> environmentVariables;
@@ -391,13 +397,13 @@ public class Machine {
 		this.tomcatInstances = tomcatInstances;
 	}
 
-//	public DatagridServer getDatagridServer() {
-//		return datagridServer;
-//	}
-//
-//	public void setDatagridServer(DatagridServer datagridServer) {
-//		this.datagridServer = datagridServer;
-//	}
+	// public DatagridServer getDatagridServer() {
+	// return datagridServer;
+	// }
+	//
+	// public void setDatagridServer(DatagridServer datagridServer) {
+	// this.datagridServer = datagridServer;
+	// }
 
 	public Collection<EnvironmentVariable> getEnvironmentVariables() {
 		return environmentVariables;
@@ -408,4 +414,40 @@ public class Machine {
 		this.environmentVariables = environmentVariables;
 	}
 
+	/**
+	 * @return the datagridServer
+	 */
+	public DatagridServer getDatagridServer() {
+		return datagridServer;
+	}
+
+	/**
+	 * @param datagridServer
+	 *            the datagridServer to set
+	 */
+	public void setDatagridServer(DatagridServer datagridServer) {
+		this.datagridServer = datagridServer;
+	}
+
+	/**
+	 * @return the machineServerType
+	 */
+	public int getMachineServerType() {
+		return machineServerType;
+	}
+
+	/**
+	 * @param machineServerType
+	 *            the machineServerType to set
+	 */
+	public void setMachineServerType(int machineServerType) {
+		this.machineServerType = machineServerType;
+	}
+
+	public int getTomcatInstanceNo() {
+		if (tomcatInstances != null) {
+			return tomcatInstances.size();
+		}
+		return 0;
+	}
 }

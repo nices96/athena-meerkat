@@ -63,18 +63,22 @@ Ext.define('webapp.controller.UserController', {
 
     },
 
-    onTextfieldChange: function(field, newValue, oldValue, eOpts) {
-        var store = Ext.getStore("UserStore");
-        var url = GlobalData.urlPrefix + "user/search";
-        Ext.Ajax.request({
-             url: url,
-            params: {"userName":newValue},
-             success: function(resp, ops) {
+    onTextfieldSpecialkey: function(field, e, eOpts) {
 
-                    var response = Ext.decode(resp.responseText);
-                    Ext.getStore("UserStore").loadData(response, false);
-             }
-            });
+        if(e.getKey() === e.ENTER){
+            var store = Ext.getStore("UserStore");
+            var url = GlobalData.urlPrefix + "user/search";
+            Ext.Ajax.request({
+                 url: url,
+                params: {"userName":field.getValue()},
+                 success: function(resp, ops) {
+
+                        var response = Ext.decode(resp.responseText);
+                        Ext.getStore("UserStore").loadData(response, false);
+                 },
+                method:"GET"
+                });
+        }
     },
 
     onUserRoleCreateBtnClick: function(button, e, eOpts) {
@@ -216,7 +220,7 @@ Ext.define('webapp.controller.UserController', {
 
              if(btn == "yes"){
                 Ext.Ajax.request({
-                    url: GlobalData.urlPrefix+ "/user/delete",
+                    url: GlobalData.urlPrefix+ "user/delete",
                     params: {"id":id},
                     success: function(resp, ops) {
 
@@ -301,7 +305,7 @@ Ext.define('webapp.controller.UserController', {
 
              if(btn == "yes"){
                 Ext.Ajax.request({
-                    url: GlobalData.urlPrefix+ "/user/role/delete",
+                    url: GlobalData.urlPrefix+ "user/role/delete",
                     params: {"id":id},
                     success: function(resp, ops) {
 
@@ -339,7 +343,7 @@ Ext.define('webapp.controller.UserController', {
                 click: this.onSubmitButtonClick
             },
             "#mytextfield": {
-                change: this.onTextfieldChange
+                specialkey: this.onTextfieldSpecialkey
             },
             "#userRoleCreateBtn": {
                 click: this.onUserRoleCreateBtnClick

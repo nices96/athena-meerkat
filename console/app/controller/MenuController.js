@@ -184,7 +184,7 @@ Ext.define('webapp.controller.MenuController', {
                                 webapp.app.getController("TomcatController").changeState(tomcatId, 2);
                                 break;
                             case 'edit-tomcat':
-                                alert("Edit tomcat");
+                                webapp.app.getController("TomcatController").showTomcatWindow("edit", tomcatId, 0);
                                 break;
                             case 'delete-tomcat':
                                 alert("Delete tomcat");
@@ -294,7 +294,7 @@ Ext.define('webapp.controller.MenuController', {
             prefix_child_menu_id = parentId + "_tomcat_";
         }
         else {
-             return;
+            return;
         }
 
         var treePanel = Ext.getCmp("menuTreePanel");
@@ -327,7 +327,7 @@ Ext.define('webapp.controller.MenuController', {
     },
 
     loadTomcatList: function(domainId) {
-        alert("Tomcat list of " + domainId + " is loading");
+        this.loadChildMenus("tomcatMng_domain_"+domainId);
     },
 
     loadMonitoringServerList: function() {

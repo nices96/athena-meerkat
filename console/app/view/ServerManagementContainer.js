@@ -21,16 +21,17 @@ Ext.define('webapp.view.ServerManagementContainer', {
         'Ext.tab.Panel',
         'Ext.tab.Tab',
         'Ext.grid.Panel',
-        'Ext.grid.column.Number',
-        'Ext.grid.column.Date',
-        'Ext.grid.column.Boolean',
         'Ext.grid.View',
-        'Ext.toolbar.Paging',
+        'Ext.form.Panel',
+        'Ext.form.field.Hidden',
+        'Ext.form.field.File',
+        'Ext.form.FieldSet',
         'Ext.form.field.ComboBox',
         'Ext.toolbar.Separator',
-        'Ext.form.FieldSet',
         'Ext.form.RadioGroup',
-        'Ext.form.field.Radio'
+        'Ext.form.field.Radio',
+        'Ext.toolbar.Paging',
+        'Ext.grid.column.Boolean'
     ],
 
     layout: {
@@ -74,41 +75,30 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                     xtype: 'gridpanel',
                                     flex: 1,
                                     dock: 'top',
+                                    id: 'tomcatServerGrid',
                                     title: '',
                                     forceFit: true,
+                                    store: 'MachineStore',
                                     columns: [
                                         {
                                             xtype: 'gridcolumn',
-                                            dataIndex: 'string',
+                                            dataIndex: 'name',
                                             text: 'Name'
                                         },
                                         {
-                                            xtype: 'numbercolumn',
-                                            dataIndex: 'number',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'osName',
                                             text: 'Operating System'
                                         },
                                         {
-                                            xtype: 'datecolumn',
-                                            dataIndex: 'date',
-                                            text: 'Type'
-                                        },
-                                        {
-                                            xtype: 'booleancolumn',
-                                            dataIndex: 'bool',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'sshipaddr',
                                             text: 'IP Address'
                                         },
                                         {
-                                            xtype: 'booleancolumn',
-                                            dataIndex: 'bool',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'tomcatInstanceNo',
                                             text: 'Tomcat Instances'
-                                        }
-                                    ],
-                                    dockedItems: [
-                                        {
-                                            xtype: 'pagingtoolbar',
-                                            dock: 'bottom',
-                                            width: 360,
-                                            displayInfo: true
                                         }
                                     ]
                                 },
@@ -122,6 +112,7 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                 {
                                     xtype: 'tabpanel',
                                     flex: 7,
+                                    id: 'detailTomcatServerTab',
                                     manageHeight: false,
                                     activeTab: 0,
                                     items: [
@@ -132,35 +123,175 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                             items: [
                                                 {
                                                     xtype: 'container',
+                                                    margin: '10 10 10 10',
                                                     items: [
                                                         {
-                                                            xtype: 'textfield',
-                                                            fieldLabel: 'IP Address:'
-                                                        },
+                                                            xtype: 'form',
+                                                            id: 'sshFormPanel',
+                                                            bodyPadding: 10,
+                                                            title: '',
+                                                            items: [
+                                                                {
+                                                                    xtype: 'textfield',
+                                                                    id: 'tomcatSSHIPAddressTextField',
+                                                                    fieldLabel: 'IP Address:',
+                                                                    readOnly: true,
+                                                                    allowBlank: false
+                                                                },
+                                                                {
+                                                                    xtype: 'textfield',
+                                                                    id: 'tomcatSSHPortTextField',
+                                                                    fieldLabel: 'Port',
+                                                                    readOnly: true,
+                                                                    allowBlank: false
+                                                                },
+                                                                {
+                                                                    xtype: 'textfield',
+                                                                    id: 'tomcatSSHUserIDTextField',
+                                                                    fieldLabel: 'User ID',
+                                                                    readOnly: true,
+                                                                    allowBlank: false
+                                                                },
+                                                                {
+                                                                    xtype: 'container',
+                                                                    layout: {
+                                                                        type: 'hbox',
+                                                                        align: 'stretch'
+                                                                    },
+                                                                    items: [
+                                                                        {
+                                                                            xtype: 'textfield',
+                                                                            id: 'tomcatSSHPasswordTextField',
+                                                                            width: 255,
+                                                                            fieldLabel: 'Password',
+                                                                            inputType: 'password',
+                                                                            readOnly: true,
+                                                                            allowBlank: false
+                                                                        },
+                                                                        {
+                                                                            xtype: 'checkboxfield',
+                                                                            itemId: 'showPasswordCheckbox',
+                                                                            margin: '0 0 0 10',
+                                                                            fieldLabel: '',
+                                                                            boxLabel: 'Show password'
+                                                                        },
+                                                                        {
+                                                                            xtype: 'hiddenfield',
+                                                                            flex: 1,
+                                                                            id: 'serverIDHiddenField',
+                                                                            fieldLabel: 'Label'
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    xtype: 'button',
+                                                                    id: 'tbnServerSSHTestConnection',
+                                                                    text: 'Test'
+                                                                },
+                                                                {
+                                                                    xtype: 'button',
+                                                                    itemId: 'btnServerSSHEdit',
+                                                                    margin: '10 10 10 10',
+                                                                    text: 'Edit'
+                                                                },
+                                                                {
+                                                                    xtype: 'button',
+                                                                    disabled: true,
+                                                                    hidden: true,
+                                                                    id: 'btnServerSSHSave',
+                                                                    itemId: '',
+                                                                    margin: '10 10 10 10',
+                                                                    text: 'Save'
+                                                                },
+                                                                {
+                                                                    xtype: 'button',
+                                                                    id: 'btnServerSSHReset',
+                                                                    text: 'Reset'
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            xtype: 'panel',
+                                            autoScroll: true,
+                                            title: 'Agent',
+                                            items: [
+                                                {
+                                                    xtype: 'container',
+                                                    margin: '10 10 10 10',
+                                                    items: [
                                                         {
-                                                            xtype: 'textfield',
-                                                            fieldLabel: 'Port'
-                                                        },
-                                                        {
-                                                            xtype: 'textfield',
-                                                            fieldLabel: 'User ID'
-                                                        },
-                                                        {
-                                                            xtype: 'textfield',
-                                                            fieldLabel: 'Password',
-                                                            inputType: 'password'
-                                                        },
-                                                        {
-                                                            xtype: 'button',
-                                                            text: 'Test'
-                                                        },
-                                                        {
-                                                            xtype: 'button',
-                                                            text: 'Edit'
-                                                        },
-                                                        {
-                                                            xtype: 'button',
-                                                            text: 'Reset'
+                                                            xtype: 'form',
+                                                            id: 'agentFormPanel',
+                                                            width: 659,
+                                                            bodyPadding: 10,
+                                                            title: '',
+                                                            items: [
+                                                                {
+                                                                    xtype: 'filefield',
+                                                                    anchor: '100%',
+                                                                    width: 1243,
+                                                                    fieldLabel: 'Agent (*.jar)'
+                                                                },
+                                                                {
+                                                                    xtype: 'container',
+                                                                    layout: {
+                                                                        type: 'hbox',
+                                                                        align: 'stretch'
+                                                                    },
+                                                                    items: [
+                                                                        {
+                                                                            xtype: 'hiddenfield',
+                                                                            flex: 1,
+                                                                            id: 'serverIDHiddenField1',
+                                                                            fieldLabel: 'Label'
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    xtype: 'fieldset',
+                                                                    width: 643,
+                                                                    title: 'Agent configurations',
+                                                                    items: [
+                                                                        {
+                                                                            xtype: 'textfield',
+                                                                            id: 'tomcatSSHUserIDTextField1',
+                                                                            width: 418,
+                                                                            fieldLabel: 'Installation path',
+                                                                            readOnly: true,
+                                                                            allowBlank: false
+                                                                        },
+                                                                        {
+                                                                            xtype: 'textfield',
+                                                                            id: 'tomcatSSHPortTextField1',
+                                                                            width: 418,
+                                                                            fieldLabel: '$PATH',
+                                                                            readOnly: true,
+                                                                            allowBlank: false
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    xtype: 'button',
+                                                                    id: 'tbnServerSSHTestConnection1',
+                                                                    text: 'Test'
+                                                                },
+                                                                {
+                                                                    xtype: 'button',
+                                                                    id: 'btnServerSSHSave1',
+                                                                    itemId: '',
+                                                                    margin: '10 10 10 10',
+                                                                    text: 'Save'
+                                                                },
+                                                                {
+                                                                    xtype: 'button',
+                                                                    id: 'btnServerSSHReset1',
+                                                                    text: 'Reset'
+                                                                }
+                                                            ]
                                                         }
                                                     ]
                                                 }
@@ -176,7 +307,8 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                                     items: [
                                                         {
                                                             xtype: 'combobox',
-                                                            fieldLabel: 'Select revision:'
+                                                            fieldLabel: 'Select revision:',
+                                                            store: 'RevisionStore'
                                                         },
                                                         {
                                                             xtype: 'tbseparator'
@@ -198,17 +330,19 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                             items: [
                                                 {
                                                     xtype: 'gridpanel',
+                                                    id: 'environmentVariablesGridPanel',
                                                     title: '',
                                                     forceFit: true,
+                                                    store: 'EnvironmentVariableStore',
                                                     columns: [
                                                         {
                                                             xtype: 'gridcolumn',
-                                                            dataIndex: 'string',
+                                                            dataIndex: 'name',
                                                             text: 'Variable name'
                                                         },
                                                         {
-                                                            xtype: 'numbercolumn',
-                                                            dataIndex: 'number',
+                                                            xtype: 'gridcolumn',
+                                                            dataIndex: 'value',
                                                             text: 'Value'
                                                         }
                                                     ]
@@ -590,13 +724,23 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                                 }
                                             ]
                                         }
-                                    ]
+                                    ],
+                                    listeners: {
+                                        tabchange: {
+                                            fn: me.onDetailTomcatServerTabTabChange,
+                                            scope: me
+                                        }
+                                    }
                                 }
                             ]
                         },
                         {
                             xtype: 'panel',
                             title: 'Datagrid Servers',
+                            tabConfig: {
+                                xtype: 'tab',
+                                tabIndex: 1
+                            },
                             dockedItems: [
                                 {
                                     xtype: 'toolbar',
@@ -612,36 +756,35 @@ Ext.define('webapp.view.ServerManagementContainer', {
                             items: [
                                 {
                                     xtype: 'gridpanel',
+                                    id: 'datagridServerGroupGrid',
                                     title: 'Datagrid Server Group',
                                     forceFit: true,
+                                    store: 'DatagridServerGroupStore',
                                     columns: [
                                         {
                                             xtype: 'gridcolumn',
-                                            dataIndex: 'string',
+                                            dataIndex: 'name',
                                             text: 'Name'
                                         },
                                         {
-                                            xtype: 'numbercolumn',
-                                            dataIndex: 'number',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'type',
                                             text: 'Type'
                                         },
                                         {
-                                            xtype: 'datecolumn',
-                                            dataIndex: 'date',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'serverNo',
                                             text: 'Servers'
-                                        },
-                                        {
-                                            xtype: 'booleancolumn',
-                                            dataIndex: 'bool',
-                                            text: 'Action'
                                         }
                                     ],
                                     dockedItems: [
                                         {
                                             xtype: 'pagingtoolbar',
                                             dock: 'bottom',
+                                            id: 'datagridServerGroupPaging',
                                             width: 360,
-                                            displayInfo: true
+                                            displayInfo: true,
+                                            store: 'DatagridServerGroupStore'
                                         }
                                     ]
                                 },
@@ -651,37 +794,39 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                 },
                                 {
                                     xtype: 'gridpanel',
+                                    id: 'datagirdServerGrid',
                                     title: '',
                                     forceFit: true,
+                                    store: 'DatagridServerStore',
                                     columns: [
                                         {
                                             xtype: 'gridcolumn',
-                                            dataIndex: 'string',
+                                            dataIndex: 'serverName',
                                             text: 'Server Name'
                                         },
                                         {
-                                            xtype: 'numbercolumn',
-                                            dataIndex: 'number',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'groupName',
                                             text: 'Group'
                                         },
                                         {
-                                            xtype: 'datecolumn',
-                                            dataIndex: 'date',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'ipAddress',
                                             text: 'IP Address'
                                         },
                                         {
-                                            xtype: 'booleancolumn',
-                                            dataIndex: 'bool',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'hostName',
                                             text: 'Hostname'
                                         },
                                         {
-                                            xtype: 'booleancolumn',
-                                            dataIndex: 'bool',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'sessions',
                                             text: 'Sessions'
                                         },
                                         {
-                                            xtype: 'booleancolumn',
-                                            dataIndex: 'bool',
+                                            xtype: 'gridcolumn',
+                                            dataIndex: 'status',
                                             text: 'Status'
                                         },
                                         {
@@ -691,12 +836,6 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                         }
                                     ],
                                     dockedItems: [
-                                        {
-                                            xtype: 'pagingtoolbar',
-                                            dock: 'bottom',
-                                            width: 360,
-                                            displayInfo: true
-                                        },
                                         {
                                             xtype: 'toolbar',
                                             dock: 'top',
@@ -718,12 +857,71 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    listeners: {
+                        tabchange: {
+                            fn: me.onTabpanelTabChange,
+                            scope: me
+                        }
+                    }
                 }
-            ]
+            ],
+            listeners: {
+                activate: {
+                    fn: me.onContainerActivate,
+                    scope: me
+                }
+            }
         });
 
         me.callParent(arguments);
+    },
+
+    onDetailTomcatServerTabTabChange: function(tabPanel, newCard, oldCard, eOpts) {
+
+
+        var activeTab = tabPanel.getActiveTab();
+        var activeTabIndex = tabPanel.items.findIndex('id', activeTab.id);
+        if(activeTabIndex === 2) { //env tab
+            var selectedRecords;
+            selectedRecords = Ext.getCmp('tomcatServerGrid').getSelectionModel().getSelection();
+
+            if (selectedRecords === "") {
+                Ext.Msg.show({
+                    title: "Message",
+                    msg: "Please choose tomcat server",
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.WARNING
+                });
+                return;
+            }
+
+            var serverId = selectedRecords[0].get("id");
+
+            webapp.app.getController("ServerManagementController").loadEnvironmentVariables(serverId, function(data){
+                   Ext.getCmp("environmentVariablesGridPanel").getStore().loadData(data);
+            });
+        }
+    },
+
+    onTabpanelTabChange: function(tabPanel, newCard, oldCard, eOpts) {
+        var activeTab = tabPanel.getActiveTab();
+        var activeTabIndex = tabPanel.items.findIndex('id', activeTab.id);
+        if(activeTabIndex === 0) {//tomcat server tab
+            webapp.app.getController("ServerManagementController").loadTomcatServers(function(data){
+                Ext.getCmp("tomcatServerGrid").getStore().loadData(data);
+            });
+        }
+        else if(activeTabIndex === 1) {//datagrid server tab
+            Ext.getCmp("datagridServerGroupGrid").getStore().reload();
+        }
+
+    },
+
+    onContainerActivate: function(component, eOpts) {
+         webapp.app.getController("ServerManagementController").loadTomcatServers(function(data){
+                Ext.getCmp("tomcatServerGrid").getStore().loadData(data);
+            });
     }
 
 });

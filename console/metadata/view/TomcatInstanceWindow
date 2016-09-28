@@ -204,24 +204,6 @@
                     "designerId": "b9098196-d038-41df-8d84-768aa2f7d86c",
                     "cn": [
                         {
-                            "type": "Ext.form.field.Text",
-                            "reference": {
-                                "name": "items",
-                                "type": "array"
-                            },
-                            "codeClass": null,
-                            "userConfig": {
-                                "allowBlank": false,
-                                "allowOnlyWhitespace": false,
-                                "fieldLabel": "JAVA_HOME",
-                                "id": "javaHomeField",
-                                "labelWidth": 150,
-                                "width": 399
-                            },
-                            "name": "MyTextField29",
-                            "designerId": "c83ed18c-0817-4a20-a0e9-d8350f0d6549"
-                        },
-                        {
                             "type": "Ext.form.field.Number",
                             "reference": {
                                 "name": "items",
@@ -421,7 +403,32 @@
                                 "text": "Cancel"
                             },
                             "name": "MyButton35",
-                            "designerId": "33bfb36f-ce56-4a0c-93c3-f2f92bfe1252"
+                            "designerId": "33bfb36f-ce56-4a0c-93c3-f2f92bfe1252",
+                            "cn": [
+                                {
+                                    "type": "basiceventbinding",
+                                    "reference": {
+                                        "name": "listeners",
+                                        "type": "array"
+                                    },
+                                    "codeClass": null,
+                                    "userConfig": {
+                                        "fn": "onBtnCancelTomcatClick",
+                                        "implHandler": [
+                                            " Ext.MessageBox.confirm('Confirm', '작업을 취소하시겠습니까?', function(btn){",
+                                            "",
+                                            "     if(btn == \"yes\"){",
+                                            "        button.up(\"window\").close();",
+                                            "     }",
+                                            " });"
+                                        ],
+                                        "name": "click",
+                                        "scope": "me"
+                                    },
+                                    "name": "onBtnCancelTomcatClick",
+                                    "designerId": "4ed54a15-30fa-428f-a15b-dfcd6dd92d48"
+                                }
+                            ]
                         }
                     ]
                 },

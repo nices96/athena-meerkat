@@ -2,10 +2,13 @@ package com.athena.meerkat.controller.web.datagridserver;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -26,15 +29,19 @@ public class DatagridServerGroup implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "Id")
 	private int Id;
 
 	@Column(name = "name")
 	private String name;
 
+	@Column(name = "type")
+	private String type;
+
 	@OneToMany(mappedBy = "datagridServerGroup", fetch = FetchType.LAZY)
-	@JsonBackReference
-	private Collection<DatagridServer> datagridServers;
+	@JsonManagedReference
+	private List<DatagridServer> datagridServers;
 
 	@OneToOne
 	@JsonBackReference
@@ -64,12 +71,34 @@ public class DatagridServerGroup implements Serializable {
 		this.domain = domain;
 	}
 
-	public Collection<DatagridServer> getDatagridServers() {
+	public List<DatagridServer> getDatagridServers() {
 		return datagridServers;
 	}
 
-	public void setDatagridServers(Collection<DatagridServer> datagridServers) {
+	public void setDatagridServers(List<DatagridServer> datagridServers) {
 		this.datagridServers = datagridServers;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * @param type
+	 *            the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public int getServerNo() {
+		if (datagridServers != null) {
+			return datagridServers.size();
+		}
+		return 0;
 	}
 
 }

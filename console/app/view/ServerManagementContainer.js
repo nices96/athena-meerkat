@@ -307,8 +307,11 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                                     items: [
                                                         {
                                                             xtype: 'combobox',
+                                                            id: 'evRevisionComboBox',
                                                             fieldLabel: 'Select revision:',
-                                                            store: 'RevisionStore'
+                                                            displayField: 'name',
+                                                            store: 'RevisionStore',
+                                                            valueField: 'id'
                                                         },
                                                         {
                                                             xtype: 'tbseparator'
@@ -883,24 +886,29 @@ Ext.define('webapp.view.ServerManagementContainer', {
         var activeTab = tabPanel.getActiveTab();
         var activeTabIndex = tabPanel.items.findIndex('id', activeTab.id);
         if(activeTabIndex === 2) { //env tab
-            var selectedRecords;
-            selectedRecords = Ext.getCmp('tomcatServerGrid').getSelectionModel().getSelection();
+            try{
+                var selectedRecords;
+                selectedRecords = Ext.getCmp('tomcatServerGrid').getSelectionModel().getSelection();
+                var serverId = selectedRecords[0].get("id");
 
-            if (selectedRecords === "") {
+                //load EV revisions
+                webapp.app.getController("ServerManagementController").loadEVRevisions(serverId, function(data){
+                        Ext.getCmp("evRevisionComboBox").getStore().loadData(data);
+                    });
+
+                webapp.app.getController("ServerManagementController").loadEnvironmentVariables(serverId, function(data){
+                    Ext.getCmp("environmentVariablesGridPanel").getStore().loadData(data);
+                });
+            }catch(e){
+
                 Ext.Msg.show({
                     title: "Message",
                     msg: "Please choose tomcat server",
                     buttons: Ext.Msg.OK,
                     icon: Ext.Msg.WARNING
                 });
-                return;
             }
 
-            var serverId = selectedRecords[0].get("id");
-
-            webapp.app.getController("ServerManagementController").loadEnvironmentVariables(serverId, function(data){
-                   Ext.getCmp("environmentVariablesGridPanel").getStore().loadData(data);
-            });
         }
     },
 

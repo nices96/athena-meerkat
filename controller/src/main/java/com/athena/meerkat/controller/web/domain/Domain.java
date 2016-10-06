@@ -28,11 +28,8 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
  */
 @Entity
 @Table(name = "domain")
-public class Domain implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class Domain {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "Id")
@@ -46,16 +43,20 @@ public class Domain implements Serializable {
 	@JoinColumn(name = "datagrid_server_group_id")
 	private DatagridServerGroup serverGroup;
 
-	@OneToMany(mappedBy = "domain", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy = "domain", fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private List<TomcatInstance> tomcats;
 
 	@OneToMany(mappedBy = "domain")
 	@JsonManagedReference
-	private Collection<ClusteringConfigurationValue> clusteringConfig;
+	private Collection<ClusteringConfiguration> clusteringConfig;
 
 	public String getName() {
 		return name;
+	}
+
+	public String getClusteringString() {
+		return this.isClustering ? "Clustering" : "Non-clustering";
 	}
 
 	public int getDatagridServerGroupId() {
@@ -123,12 +124,12 @@ public class Domain implements Serializable {
 		this.serverGroup = serverGroup;
 	}
 
-	public Collection<ClusteringConfigurationValue> getClusteringConfig() {
+	public Collection<ClusteringConfiguration> getClusteringConfig() {
 		return clusteringConfig;
 	}
 
 	public void setClusteringConfig(
-			Collection<ClusteringConfigurationValue> clusteringConfig) {
+			Collection<ClusteringConfiguration> clusteringConfig) {
 		this.clusteringConfig = clusteringConfig;
 	}
 }

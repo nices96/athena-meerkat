@@ -1,9 +1,13 @@
 package com.athena.meerkat.controller.web.machine;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,13 +47,22 @@ public class MachineController {
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
-	public List<Machine> getList() {
-		ServiceResult result = service.getList();
-		if (result.getStatus() == Status.DONE) {
-			List<Machine> list = (List<Machine>) result.getReturnedVal();
-			return list;
-		}
-		return null;
+	public SimpleJsonResponse getList(SimpleJsonResponse json) {
+		List<Machine> result = service.getList();
+		json.setSuccess(true);
+
+		json.setData(result);
+		return json;
+	}
+
+	@RequestMapping(value = "/simplelist", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse getSimpleList(SimpleJsonResponse json) {
+		List<Machine> result = service.getSimpleMachineList();
+		json.setSuccess(true);
+
+		json.setData(result);
+		return json;
 	}
 
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
@@ -157,30 +170,15 @@ public class MachineController {
 	@RequestMapping(value = "/evlist", method = RequestMethod.GET)
 	@ResponseBody
 	public SimpleJsonResponse getEVList(SimpleJsonResponse json, int machineId) {
+
 		Machine machine = service.retrieve(machineId);
+
 		if (machine == null) {
 			json.setSuccess(false);
 			json.setMsg("Machine does not exist.");
 		} else {
 			List<EnvironmentVariable> list = evService.getByMachine(machine);
 			json.setData(list);
-			json.setSuccess(true);
-		}
-		return json;
-	}
-
-	@RequestMapping(value = "/ev/revisions", method = RequestMethod.GET)
-	@ResponseBody
-	public SimpleJsonResponse getEVRevision(SimpleJsonResponse json,
-			int machineId) {
-		Machine machine = service.retrieve(machineId);
-		if (machine == null) {
-			json.setSuccess(false);
-			json.setMsg("Machine does not exist.");
-		} else {
-			// List<EnvRevision> revisions = new ArrayList<EnvRevision>();
-			// revision = evService.getRevisions(machine);
-			// json.setData(revisions);
 			json.setSuccess(true);
 		}
 		return json;

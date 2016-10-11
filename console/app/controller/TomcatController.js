@@ -17,7 +17,7 @@ Ext.define('webapp.controller.TomcatController', {
     extend: 'Ext.app.Controller',
 
     onNewTomcatClick: function(button, e, eOpts) {
-        this.showTomcatWindow("new",0);
+        this.showTomcatWindow("new",0, GlobalData.lastSelectedMenuId);
     },
 
     onDomainTomcatTabTabChange: function(tabPanel, newCard, oldCard, eOpts) {
@@ -422,10 +422,10 @@ Ext.define('webapp.controller.TomcatController', {
     },
 
     loadDataBusyThreadChart: function(tomcatId) {
-         var busyThread= GlobalData.urlPrefix + "/tomcat//monitoring/busythreads";
+         var busyThread= GlobalData.urlPrefix + "monitor/jmx/"+ tomcatId +"/threadpool/count";
         Ext.Ajax.request({
                 url: busyThread,
-                params: {"tomcatId": tomcatId},
+                //params: {"tomcatId": tomcatId},
                 success: function(resp, ops) {
                     var response = Ext.decode(resp.responseText);
                     if (response.success === true){

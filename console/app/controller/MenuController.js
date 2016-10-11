@@ -26,18 +26,22 @@ Ext.define('webapp.controller.MenuController', {
         //    navigationText = navField.getValue() + " > " + menuText;
         //
         //else {
-            //vigationText = menuText;
+        //vigationText = menuText;
         //}
 
         navField.setText(menuText);
 
         if(menuId !== undefined){
             if (!is_leaf){
-               this.loadChildMenus(menuId);
+                this.loadChildMenus(menuId);
             }
 
             this.showMenu(menuId, menuText);
-
+            // turn off live busy threads chart on monitoring part
+            if(GlobalData.busyThreadsChartInterval > -1){
+                clearInterval(GlobalData.busyThreadsChartInterval);
+                GlobalData.busyThreadsChartInterval = -1;
+            }
         }
 
     },
@@ -98,6 +102,10 @@ Ext.define('webapp.controller.MenuController', {
                 text: 'New Tomcat'
             },
             {
+                id: 'create-wizard',
+                text: 'Wizard'
+            },
+            {
                 id: 'edit-domain',
                 text: 'Edit'
             },
@@ -121,6 +129,9 @@ Ext.define('webapp.controller.MenuController', {
                    switch (_item.id) {
                         case 'new-tomcat':
                             webapp.app.getController("TomcatController").showTomcatWindow("new", 0, domainId);
+                            break;
+                        case 'create-wizard':
+                            Ext.create('widget.ticWizard').show();
                             break;
                         case 'edit-domain':
                             webapp.app.getController("DomainController").showDomainWindow("edit", domainId);

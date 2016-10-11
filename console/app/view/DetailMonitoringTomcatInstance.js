@@ -719,7 +719,7 @@ Ext.define('webapp.view.DetailMonitoringTomcatInstance', {
                                             flex: 1,
                                             margin: '5 5 5 5',
                                             layout: 'fit',
-                                            title: 'Thread Pool Utilization',
+                                            title: '',
                                             titleAlign: 'center',
                                             dockedItems: [
                                                 {
@@ -769,25 +769,27 @@ Ext.define('webapp.view.DetailMonitoringTomcatInstance', {
                                             flex: 1,
                                             margin: '5 5 5 5',
                                             layout: 'fit',
-                                            title: 'Busy Threads',
+                                            title: 'Busy threads',
                                             titleAlign: 'center',
                                             dockedItems: [
                                                 {
                                                     xtype: 'chart',
                                                     dock: 'top',
+                                                    autoRender: true,
                                                     height: 250,
                                                     id: 'tomcatBusyThreadChart',
                                                     width: 400,
-                                                    animate: true,
                                                     insetPadding: 20,
                                                     store: 'TomcatBusyThreadStore',
+                                                    theme: 'Yellow',
                                                     axes: [
                                                         {
                                                             type: 'Category',
                                                             fields: [
                                                                 'time'
                                                             ],
-                                                            title: 'Timestamp',
+                                                            grid: true,
+                                                            title: 'Time',
                                                             position: 'bottom'
                                                         },
                                                         {
@@ -795,7 +797,7 @@ Ext.define('webapp.view.DetailMonitoringTomcatInstance', {
                                                             fields: [
                                                                 'value'
                                                             ],
-                                                            title: 'Value',
+                                                            grid: true,
                                                             position: 'left'
                                                         }
                                                     ],
@@ -803,14 +805,12 @@ Ext.define('webapp.view.DetailMonitoringTomcatInstance', {
                                                         {
                                                             type: 'line',
                                                             highlight: true,
-                                                            label: {
-                                                                field: 'value',
-                                                                display: 'over'
-                                                            },
                                                             title: 'Busy threads',
                                                             xField: 'time',
                                                             yField: 'value',
-                                                            smooth: 3
+                                                            fill: true,
+                                                            showMarkers: false,
+                                                            smooth: true
                                                         }
                                                     ]
                                                 }
@@ -1187,19 +1187,18 @@ Ext.define('webapp.view.DetailMonitoringTomcatInstance', {
     onDetailTomcatMonitoringTabTabChange: function(tabPanel, newCard, oldCard, eOpts) {
         var activeTab = tabPanel.getActiveTab();
         var activeTabIndex =tabPanel.items.findIndex('id', activeTab.id);
-        var tomcatId = 1;
-        var interVal = setInterval(function(){
-                webapp.app.getController("TomcatController").loadDataBusyThreadChart(tomcatId);
-         }, 5000);
+        var tomcatId = GlobalData.lastSelectedMenuId;
 
         if(activeTabIndex == 2) {//thread tab
+        GlobalData.busyThreadsChartInterval = setInterval(function(){
+                webapp.app.getController("TomcatController").loadDataBusyThreadChart(tomcatId);
+         }, 1000);
             webapp.app.getController("TomcatController").loadDataBusyThreadChart(tomcatId);
 
         }
         else {
-
-            clearInterval(interVal);
-
+            clearInterval(GlobalData.busyThreadsChartInterval);
+            GlobalData.busyThreadsChartInterval = -1;
         }
     }
 

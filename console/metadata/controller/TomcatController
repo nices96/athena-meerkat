@@ -22,7 +22,7 @@
                 "designer|targetType": "Ext.button.Button",
                 "fn": "onNewTomcatClick",
                 "implHandler": [
-                    "this.showTomcatWindow(\"new\",0);"
+                    "this.showTomcatWindow(\"new\",0, GlobalData.lastSelectedMenuId);"
                 ],
                 "name": "click",
                 "scope": "me"
@@ -679,10 +679,10 @@
                 ],
                 "fn": "loadDataBusyThreadChart",
                 "implHandler": [
-                    " var busyThread= GlobalData.urlPrefix + \"/tomcat//monitoring/busythreads\";",
+                    " var busyThread= GlobalData.urlPrefix + \"monitor/jmx/\"+ tomcatId +\"/threadpool/count\";",
                     "Ext.Ajax.request({",
                     "        url: busyThread,",
-                    "        params: {\"tomcatId\": tomcatId},",
+                    "        //params: {\"tomcatId\": tomcatId},",
                     "        success: function(resp, ops) {",
                     "            var response = Ext.decode(resp.responseText);",
                     "            if (response.success === true){",

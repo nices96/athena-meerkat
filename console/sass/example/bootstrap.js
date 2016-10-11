@@ -2431,6 +2431,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.controller.MenuController": [],
   "webapp.controller.ServerManagementController": [],
   "webapp.controller.TomcatController": [],
+  "webapp.controller.TomcatInstWizardController": [],
   "webapp.controller.UserController": [],
   "webapp.controller.dashboardController": [],
   "webapp.controller.footerController": [],
@@ -2443,8 +2444,8 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.model.DatasourceModel": [],
   "webapp.model.DomainModel": [],
   "webapp.model.EnvironmentVariableModel": [],
-  "webapp.model.MachineModel": [],
   "webapp.model.RevisionModel": [],
+  "webapp.model.ServerModel": [],
   "webapp.model.SessionKeyData": [],
   "webapp.model.TomcatBusyThreadModel": [],
   "webapp.model.TomcatInstanceModel": [],
@@ -2458,9 +2459,9 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.store.DomainStore": [],
   "webapp.store.EnvironmentVariableStore": [],
   "webapp.store.LinkingTomcatDatasourceStore": [],
-  "webapp.store.MachineStore": [],
   "webapp.store.MenuTreeStore": [],
   "webapp.store.RevisionStore": [],
+  "webapp.store.ServerStore": [],
   "webapp.store.TempoStore": [],
   "webapp.store.TomcatBusyThreadStore": [],
   "webapp.store.TomcatInstanceListStore": [],
@@ -2476,6 +2477,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.view.DetailMonitoringMachineContainer": [],
   "webapp.view.DetailMonitoringTomcatInstance": [],
   "webapp.view.DomainContainer": [],
+  "webapp.view.DomainForm": [],
   "webapp.view.DomainWindow": [],
   "webapp.view.EnvironmentVariableWindow": [],
   "webapp.view.LinkNewDataSourceWindow": [],
@@ -2483,8 +2485,11 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.view.MonitoringTomcatInstance": [],
   "webapp.view.ResourceManagementContainer": [],
   "webapp.view.ServerManagementContainer": [],
+  "webapp.view.ServerManagementContainer1": [],
   "webapp.view.SeverDataGridWindow": [],
+  "webapp.view.TomcatForm": [],
   "webapp.view.TomcatInstanceContainer": [],
+  "webapp.view.TomcatInstanceCreateWizard": [],
   "webapp.view.TomcatInstanceWindow": [],
   "webapp.view.UserMntContainer": [],
   "webapp.view.UserRoleWindow": [],
@@ -3512,6 +3517,7 @@ Ext.ClassManager.addNameAliasMappings({
   "webapp.controller.MenuController": [],
   "webapp.controller.ServerManagementController": [],
   "webapp.controller.TomcatController": [],
+  "webapp.controller.TomcatInstWizardController": [],
   "webapp.controller.UserController": [
     "controller.UserController"
   ],
@@ -3526,8 +3532,8 @@ Ext.ClassManager.addNameAliasMappings({
   "webapp.model.DatasourceModel": [],
   "webapp.model.DomainModel": [],
   "webapp.model.EnvironmentVariableModel": [],
-  "webapp.model.MachineModel": [],
   "webapp.model.RevisionModel": [],
+  "webapp.model.ServerModel": [],
   "webapp.model.SessionKeyData": [],
   "webapp.model.TomcatBusyThreadModel": [],
   "webapp.model.TomcatInstanceModel": [],
@@ -3543,9 +3549,9 @@ Ext.ClassManager.addNameAliasMappings({
   "webapp.store.DomainStore": [],
   "webapp.store.EnvironmentVariableStore": [],
   "webapp.store.LinkingTomcatDatasourceStore": [],
-  "webapp.store.MachineStore": [],
   "webapp.store.MenuTreeStore": [],
   "webapp.store.RevisionStore": [],
+  "webapp.store.ServerStore": [],
   "webapp.store.TempoStore": [],
   "webapp.store.TomcatBusyThreadStore": [],
   "webapp.store.TomcatInstanceListStore": [],
@@ -3559,7 +3565,9 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.ClusteringConfigurationWindow"
   ],
   "webapp.view.DataSourceServerWindow": [],
-  "webapp.view.DataSourceWindow": [],
+  "webapp.view.DataSourceWindow": [
+    "widget.dsWin"
+  ],
   "webapp.view.DatagridServerGroupWindow": [],
   "webapp.view.DeployWindow": [
     "widget.DeployWindow"
@@ -3572,6 +3580,9 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "webapp.view.DomainContainer": [
     "widget.domaincontainer"
+  ],
+  "webapp.view.DomainForm": [
+    "widget.domainform"
   ],
   "webapp.view.DomainWindow": [
     "widget.DomainWindow"
@@ -3592,9 +3603,16 @@ Ext.ClassManager.addNameAliasMappings({
   "webapp.view.ServerManagementContainer": [
     "widget.servermanagementcontainer"
   ],
+  "webapp.view.ServerManagementContainer1": [],
   "webapp.view.SeverDataGridWindow": [],
+  "webapp.view.TomcatForm": [
+    "widget.tomcatform"
+  ],
   "webapp.view.TomcatInstanceContainer": [
     "widget.tomcatinstancecontainer"
+  ],
+  "webapp.view.TomcatInstanceCreateWizard": [
+    "widget.ticWizard"
   ],
   "webapp.view.TomcatInstanceWindow": [
     "widget.TomcatInstanceWindow"

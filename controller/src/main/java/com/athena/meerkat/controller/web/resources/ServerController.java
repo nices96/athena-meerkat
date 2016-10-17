@@ -1,20 +1,29 @@
 package com.athena.meerkat.controller.web.resources;
 
+import java.net.PasswordAuthentication;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.athena.meerkat.controller.MeerkatConstants;
 import com.athena.meerkat.controller.ServiceResult;
+import com.athena.meerkat.controller.common.MeerkatUtils;
 import com.athena.meerkat.controller.common.SSHManager;
 import com.athena.meerkat.controller.web.common.model.GridJsonResponse;
 import com.athena.meerkat.controller.web.common.model.SimpleJsonResponse;
+import com.athena.meerkat.controller.web.entities.NetworkInterface;
 import com.athena.meerkat.controller.web.entities.Server;
+import com.athena.meerkat.controller.web.entities.SshAccount;
 import com.athena.meerkat.controller.web.resources.services.ServerService;
+import com.athena.meerkat.controller.web.user.entities.User;
+import com.athena.meerkat.controller.web.user.entities.UserRole;
 
 @Controller
 @RequestMapping("/res/server")
@@ -22,20 +31,6 @@ import com.athena.meerkat.controller.web.resources.services.ServerService;
 public class ServerController {
 	@Autowired
 	private ServerService service;
-
-	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	@ResponseBody
-	public String add() {
-		String mName = "Example";// retrive from form
-		String ip4Addr = "192.168.0.88";// retrieve from form;
-		String sshUserName = "root";// retrieve from form;
-		String sshPassword = "test123";// retrieve from form;
-		int sshPort = MeerkatConstants.DEFAULT_SSH_PORT;
-		String desciprtion = "";
-		ServiceResult status = service.add(mName, desciprtion, ip4Addr,
-				sshPort, sshUserName, sshPassword);
-		return status.getMessage();
-	}
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	@ResponseBody
@@ -52,7 +47,6 @@ public class ServerController {
 	public SimpleJsonResponse getSimpleList(SimpleJsonResponse json) {
 		List<Server> result = service.getSimpleMachineList();
 		json.setSuccess(true);
-
 		json.setData(result);
 		return json;
 	}
@@ -65,97 +59,185 @@ public class ServerController {
 			json.setData(m);
 			json.setSuccess(true);
 		} else {
-			json.setMsg("Tomcat server does not exist.");
+			json.setMsg("Server does not exist.");
 			json.setSuccess(false);
 		}
 		return json;
 	}
 
-	// for testing bean creation
-	// @Override
-	// public void afterPropertiesSet() throws Exception {
-	// // System.err.println("service : " + service);
-	// }
-
-	@RequestMapping(value = "/testConnection", method = RequestMethod.GET)
+	@RequestMapping(value = "/{serverId}/nis", method = RequestMethod.GET)
 	@ResponseBody
-	public boolean testMachineConnection(int id) {
-		// Server machine = service.retrieve(id);
-		// if (machine == null) {
-		// return false;
-		// }
-		// SSHManager sshMng = new SSHManager(machine.getSshUsername(),
-		// machine.getSshPassword(), machine.getSSHIPAddr(), "",
-		// machine.getSshPort(), 1000);
-		// String errorMsg = sshMng.connect();
-		// if (errorMsg == null || errorMsg == "") {
-		// sshMng.close();
-		// return true;
-		// }
-		return false;
+	public GridJsonResponse getNIs(GridJsonResponse json,
+			@PathVariable Integer serverId) {
+		Server m = service.retrieve(serverId);
+		if (m != null) {
+			json.setList((List<?>) m.getNetworkInterfaces());
+			json.setTotal(m.getNetworkInterfaces().size());
+			json.setSuccess(true);
+		} else {
+			json.setMsg("Server does not exist.");
+			json.setSuccess(false);
+		}
+		return json;
 	}
 
-	@RequestMapping(value = "/tomcatserver", method = RequestMethod.GET)
+	@RequestMapping(value = "/{serverId}/sshAccounts", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse getTomcatServers(SimpleJsonResponse json) {
-		List<Server> tomcatServers = service
-				.getListByType(MeerkatConstants.MACHINE_TOMCAT_SERVER_TYPE);
-		if (tomcatServers != null) {
+	public GridJsonResponse getSSHAccounts(GridJsonResponse json,
+			@PathVariable Integer serverId) {
+		Server m = service.retrieve(serverId);
+		if (m != null) {
+			json.setList((List<?>) m.getSshAccounts());
+			json.setTotal(m.getSshAccounts().size());
 			json.setSuccess(true);
-			json.setData(tomcatServers);
 		} else {
+			json.setMsg("Server does not exist.");
 			json.setSuccess(false);
-			json.setMsg("Error occured.");
 		}
+		return json;
+	}
+
+	@RequestMapping(value = "/sshAcc", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse getSSHAccount(SimpleJsonResponse json, Integer id) {
+		SshAccount ssh = service.getSSHAccount(id);
+		if (ssh == null) {
+			json.setSuccess(false);
+			json.setMsg("SSH Account does not exist.");
+		} else {
+			json.setData(ssh);
+			json.setSuccess(true);
+		}
+		return json;
+	}
+
+	@RequestMapping(value = "/delssh", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse delSSHAccount(SimpleJsonResponse json, Integer id) {
+		SshAccount ssh = service.getSSHAccount(id);
+		if (ssh == null) {
+			json.setSuccess(false);
+			json.setMsg("SSH Account does not exist.");
+		} else {
+			Server server = ssh.getServer();
+			server.removeSSHAccount(ssh);
+			ssh.setServer(null);
+			service.save(server);
+			service.deleteSSHAccount(ssh);
+			json.setData(ssh);
+			json.setSuccess(true);
+		}
+		return json;
+	}
+
+	@RequestMapping(value = "/save", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse saveSeverInfo(SimpleJsonResponse json,
+			Server server, String sshIPAddr, String sshUserName,
+			String sshPassword) {
+		Server currentServer;
+		if (server.getId() == 0) {
+			Server existingServer = service.getServerByName(server.getName());
+			if (existingServer != null) {
+				json.setMsg("Server name is duplicated.");
+				json.setSuccess(false);
+				return json;
+			}
+			currentServer = server;
+			currentServer = service.save(currentServer);
+
+			NetworkInterface ni = new NetworkInterface();
+			if(!MeerkatUtils.validateIPAddress(sshIPAddr)){
+				json.setMsg("SSH IP Address is invalid.");
+				json.setSuccess(false);
+				return json;
+			}
+			ni.setIpv4(sshIPAddr);
+			ni = service.saveNI(ni);
+			ni.setServer(currentServer);
+
+			currentServer.setSshNi(ni);
+			currentServer.addNetworkInterface(ni);
+			SshAccount sshAccount = service.getSSHAccountByUserNameAndServerId(
+					sshUserName, server.getId());
+			if (sshAccount == null) {
+				sshAccount = new SshAccount();
+				sshAccount.setUsername(sshUserName);
+				sshAccount.setPassword(sshPassword);
+				sshAccount = service.saveSSHAccount(sshAccount);
+			}
+
+			sshAccount.setServer(currentServer);
+			server.addSshAccounts(sshAccount);
+			service.saveNI(ni);
+			service.saveSSHAccount(sshAccount);
+			service.save(currentServer);
+
+		} else { // edit case
+			if (server.getName().trim() == "" || server.getSshPort() < 0
+					|| server.getHostName() == "" || server.getSshNiId() <= 0) {
+				json.setMsg("The input data is invalid.");
+				json.setSuccess(false);
+				return json;
+			}
+			currentServer = service.retrieve(server.getId());
+			if (currentServer == null) {
+				json.setMsg("Server does not exist.");
+				json.setSuccess(false);
+				return json;
+			}
+			currentServer.setName(server.getName());
+			currentServer.setHostName(server.getHostName());
+			currentServer.setSshPort(server.getSshPort());
+			NetworkInterface ni = service.getNiById(server.getSshNiId());
+			currentServer.setSshNi(ni);
+			service.save(currentServer);
+		}
+
+		json.setSuccess(true);
 		return json;
 	}
 
 	@RequestMapping(value = "/testssh", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse updateSSH(SimpleJsonResponse json,
-			String sshIpAddr, int sshPort, String sshUserName,
-			String sshPassword) {
-		SSHManager sshMng = new SSHManager(sshUserName, sshPassword, sshIpAddr,
-				"", sshPort, 1000);
+	public SimpleJsonResponse testSSHConnection(SimpleJsonResponse json,
+			String userID, String password, String ipAddr, int port) {
+		SSHManager sshMng = new SSHManager(userID, password, ipAddr, "", port,
+				1000);
 		String errorMsg = sshMng.connect();
 		if (errorMsg == null || errorMsg == "") {
 			sshMng.close();
+			json.setData(true);
 			json.setSuccess(true);
-			json.setMsg("Ping successfully.");
+			json.setMsg("SSH connection is successful.");
 		} else {
 			json.setSuccess(false);
-			json.setMsg("Connection fail");
+			json.setMsg("SSH connection fail.");
 		}
 		return json;
+
 	}
 
 	@RequestMapping(value = "/updatessh", method = RequestMethod.POST)
 	@ResponseBody
 	public SimpleJsonResponse updateSSH(SimpleJsonResponse json,
-			String sshIpAddr, int sshPort, String sshUserName,
-			String sshPassword, int machineId) {
-		Server machine = service.retrieve(machineId);
-		// if (machine == null) {
-		// json.setMsg("Server does not exist.");
-		// json.setSuccess(false);
-		// } else {
-		// if (!MeerkatUtils.validateIPAddress(sshIpAddr)) {
-		// json.setMsg("IP Address is invalid.");
-		// json.setSuccess(false);
-		// } else {
-		// machine.setSSHIPAddr(sshIpAddr);
-		// machine.setSshPort(sshPort);
-		// machine.setSshUsername(sshUserName);
-		// machine.setSshPassword(sshPassword);
-		// if (service.save(machine) != null) {
-		// json.setMsg("Edit successfully.");
-		// json.setSuccess(true);
-		// } else {
-		// json.setMsg("Edit failed.");
-		// json.setSuccess(false);
-		// }
-		// }
-		// }
+			SshAccount account) {
+		if (account.getId() == 0) {
+			SshAccount existingAccount = service
+					.getSSHAccountByUserNameAndServerId(account.getUsername(),
+							account.getServerId());
+			if (existingAccount != null) {
+				json.setMsg("User ID is duplicated.");
+				json.setSuccess(false);
+			}
+		}
+		Server server = service.retrieve(account.getServerId());
+		account.setServer(server);
+
+		if (service.saveSSHAccount(account) != null) {
+			json.setSuccess(true);
+			json.setMsg("Update done");
+		}
 		return json;
 	}
 

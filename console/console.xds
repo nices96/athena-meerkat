@@ -31,7 +31,8 @@
         "lockUrlPrefix": false,
         "installStatus": "Not Installed",
         "displayfield-ExtBox1-1193-inputEl": "a new version of the framework is available",
-        "displayfield-ExtBox1-1129-inputEl": "a new version of the framework is available"
+        "displayfield-ExtBox1-1129-inputEl": "a new version of the framework is available",
+        "displayfield-ExtBox1-1270-inputEl": "a new version of the framework is available"
     },
     "xdsVersion": "3.2.0",
     "xdsBuild": 339,
@@ -68,7 +69,11 @@
             "0afcedfc-3608-44cf-99fe-5381e06ae2ff",
             "9d12f157-7685-4c94-9a8d-eb37d190bb6e",
             "65465c05-02a3-4947-85fb-817111f473e9",
-            "e31face7-e797-4a44-83ff-e5dd8a4a17e4"
+            "e31face7-e797-4a44-83ff-e5dd8a4a17e4",
+            "01a32e83-c5fb-4ecb-8358-2b6a8c44c344",
+            "261f4315-1eab-4c57-88d8-1986c38bbc1b",
+            "15fef371-cc3e-4c74-9bc2-578619539ee8",
+            "d21af2e3-3098-4b12-9f9f-5a1d1910a237"
         ],
         "store": [
             "4c2bc173-1fa6-41fb-9f51-1e615e29ba62",
@@ -88,7 +93,8 @@
             "16b1cfe7-b21b-453b-ae2a-b87195833895",
             "7f972a30-4889-4ac8-8c5c-024dc4a78545",
             "7be1464b-b85b-4caf-9733-110ae0a6bc65",
-            "f002db55-2120-4799-8faf-3e67c7decf79"
+            "f002db55-2120-4799-8faf-3e67c7decf79",
+            "382d2c37-3000-445f-9bee-bd69b729183a"
         ],
         "controller": [
             "43dd67a6-085d-49a6-9bad-39193d6863e9",
@@ -122,13 +128,17 @@
             "91b9c828-b21f-4720-beef-85d2a58f7ab2",
             "023c9681-841a-498f-a13d-6f0fe872d831",
             "e4f3f0b2-702a-47cf-9c75-417dfbd8d041",
-            "b56cdc0f-4c27-481f-ac4e-0b03c36f66ea"
+            "b56cdc0f-4c27-481f-ac4e-0b03c36f66ea",
+            "71e78db0-ba34-4cc8-81bc-2e38ce35b3cf"
         ],
         "resource": [
             "a5b947ef-eecb-40af-baed-8ee5558b74d1",
             "eb7115fe-41ac-4f7e-b8d6-6bca0bbee681"
         ],
         "app": [
+            "application",
+            "application",
+            "application",
             "application"
         ]
     }

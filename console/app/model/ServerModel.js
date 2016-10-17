@@ -32,13 +32,19 @@ Ext.define('webapp.model.ServerModel', {
             name: 'osName'
         },
         {
-            name: 'sshipaddr'
+            name: 'sshNiId'
         },
         {
             name: 'sshPort'
         },
         {
             name: 'hostName'
+        },
+        {
+            name: 'instName'
+        },
+        {
+            name: 'sshIPAddr'
         }
     ]
 });

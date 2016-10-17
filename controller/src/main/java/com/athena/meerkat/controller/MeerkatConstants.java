@@ -109,4 +109,26 @@ public abstract class MeerkatConstants {
 	 */
 	public static final int REVISION_CLUSTERING_CONFIG_TYPE = 1;
 	public static final int REVISION_ENV_CONFIG_TYPE = 2;
+	/**
+	 * Common code
+	 */
+
+	public static final String CODE_GROP_TS_STATE = "TS_STATE";
+	public static final String CODE_GROP_DB_TYPE = "dbType";
+	public static final String CONFIG_FILE_TYPE_PARENT_CODE_VALUE = "configFileType";
+	public static final String CONFIG_FILE_TYPE_SERVER_XML = "server.xml";
+	public static final String CONFIG_FILE_TYPE_CONTEXT_XML = "context.xml";
+
+	public static final String DATE_TIME_FORMATTER = "MM/dd/yyyy HH:mm:ss";
+	public static final String CONFIG_FILE_VERSION_DATE_TIME_FORMATTER = "MM/dd/yyyy HH:mm";
+
+	/**
+	 * Configuration name
+	 */
+	public static final String TOMCAT_INST_CONFIG_JAVAHOME_NAME = "java_home";
+	public static final String TOMCAT_INST_CONFIG_HTTPPORT_NAME = "http_port";
+	public static final String TOMCAT_INST_CONFIG_SESSION_TIMEOUT_NAME = "session_timeout";
+
+	public static final String CONFIG_FILE_OBJ_TYPE_DOMAIN = "domain_tomcat";
+	public static final String CONFIG_FILE_OBJ_TYPE_TOMCAT = "tomcat_inst";
 }

@@ -29,12 +29,13 @@ Ext.define('webapp.store.MenuTreeStore', {
                 expanded: true,
                 children: [
                     {
-                        text: 'Dashboard',
-                        menuId: 'dashboard',
-                        leaf: true
+                        text: 'Create Wizard',
+                        menuId: 'create-wizard',
+                        leaf: true,
+                        
                     },
                     {
-                        text: 'Tomcat Management',
+                        text: 'TomcatManagement',
                         menuId: 'tomcatMng',
                         expanded: true,
                         children: [
@@ -53,7 +54,7 @@ Ext.define('webapp.store.MenuTreeStore', {
                                 expanded: true,
                                 children: [
                                     {
-                                        text: 'Server 1',
+                                        text: 'Server1',
                                         menuId: 'monitoring_servers_server_1',
                                         expanded: true,
                                         children: [
@@ -63,7 +64,7 @@ Ext.define('webapp.store.MenuTreeStore', {
                                 ]
                             },
                             {
-                                text: 'Tomcat Instances',
+                                text: 'TomcatInstances',
                                 menuId: 'monitoring_tomcats',
                                 expanded: true,
                                 children: [
@@ -74,7 +75,7 @@ Ext.define('webapp.store.MenuTreeStore', {
                         ]
                     },
                     {
-                        text: 'Resource Management',
+                        text: 'ResourceManagement',
                         menuId: 'resourcemng',
                         expanded: true,
                         children: [
@@ -84,7 +85,7 @@ Ext.define('webapp.store.MenuTreeStore', {
                                 leaf: true
                             },
                             {
-                                text: 'Session server groups',
+                                text: 'Sessionservergroups',
                                 menuId: 'resourcemng_servers_groups',
                                 leaf: true
                             },
@@ -96,12 +97,12 @@ Ext.define('webapp.store.MenuTreeStore', {
                         ]
                     },
                     {
-                        text: 'Log Management',
+                        text: 'LogManagement',
                         menuId: 'logmnt',
                         leaf: true
                     },
                     {
-                        text: 'User Management',
+                        text: 'UserManagement',
                         menuId: 'usermnt',
                         leaf: true
                     },

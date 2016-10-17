@@ -1,170 +1,159 @@
-/**
- * 
- */
 package com.athena.meerkat.controller.web.entities;
 
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.athena.meerkat.controller.MeerkatConstants;
+import com.athena.meerkat.controller.common.MeerkatUtils;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
- * @author Tran
- *
+ * <pre>
+ * 
+ * </pre>
+ * 
+ * @author Tran Ho
+ * @version 2.0
  */
 @Entity
-@Table
-public class TomcatConfigFile {
-	@Id
-	private int id;
-	private int domainId;
-	private int fileTypeCdId;
-	private int version;
-	private String comment;
-	private String filePath;
-	private java.sql.Date createdTime;
-	private int tomcatInstanceId;
-	private int createUserId;
-
+@Table(name = "tomcat_config_file")
+public class TomcatConfigFile implements Serializable {
 	/**
 	 * 
 	 */
-	public TomcatConfigFile() {
-		// TODO Auto-generated constructor stub
+	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "Id")
+	private int Id;
+
+	@Column(name = "file_type_cd_id")
+	private int fileTypeCdId;
+	@Column(name = "version")
+	private int version;
+	@Column(name = "comment")
+	private String comment;
+	@Column(name = "file_path")
+	private String filePath;
+	@Column(name = "created_time")
+	private Date createdTime;
+	@Column(name = "create_user_id")
+	private int createUserId;
+
+	@Transient
+	private String content;
+
+	@ManyToOne
+	@JsonBackReference(value = "domain-configFile")
+	@JoinColumn(name = "domain_id")
+	private TomcatDomain tomcatDomain;
+
+	@ManyToOne
+	@JsonBackReference(value = "inst-configFile")
+	private TomcatInstance tomcatInstance;
+
+	public TomcatDomain getTomcatDomain() {
+		return tomcatDomain;
 	}
 
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
+	public void setTomcatDomain(TomcatDomain tomcatDomain) {
+		this.tomcatDomain = tomcatDomain;
 	}
 
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the domainId
-	 */
-	public int getDomainId() {
-		return domainId;
-	}
-
-	/**
-	 * @param domainId
-	 *            the domainId to set
-	 */
-	public void setDomainId(int domainId) {
-		this.domainId = domainId;
-	}
-
-	/**
-	 * @return the fileTypeCdId
-	 */
-	public int getFileTypeCdId() {
-		return fileTypeCdId;
-	}
-
-	/**
-	 * @param fileTypeCdId
-	 *            the fileTypeCdId to set
-	 */
-	public void setFileTypeCdId(int fileTypeCdId) {
-		this.fileTypeCdId = fileTypeCdId;
-	}
-
-	/**
-	 * @return the version
-	 */
 	public int getVersion() {
 		return version;
 	}
 
-	/**
-	 * @param version
-	 *            the version to set
-	 */
 	public void setVersion(int version) {
 		this.version = version;
 	}
 
-	/**
-	 * @return the comment
-	 */
+	public int getFileTypeCdId() {
+		return fileTypeCdId;
+	}
+
+	public void setFileTypeCdId(int fileTypeCdId) {
+		this.fileTypeCdId = fileTypeCdId;
+	}
+
 	public String getComment() {
 		return comment;
 	}
 
-	/**
-	 * @param comment
-	 *            the comment to set
-	 */
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
 
-	/**
-	 * @return the filePath
-	 */
 	public String getFilePath() {
 		return filePath;
 	}
 
-	/**
-	 * @param filePath
-	 *            the filePath to set
-	 */
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
 	}
 
-	/**
-	 * @return the createdTime
-	 */
-	public java.sql.Date getCreatedTime() {
+	public Date getCreatedTime() {
 		return createdTime;
 	}
 
-	/**
-	 * @param createdTime
-	 *            the createdTime to set
-	 */
-	public void setCreatedTime(java.sql.Date createdTime) {
+	public void setCreatedTime(Date createdTime) {
 		this.createdTime = createdTime;
 	}
 
-	/**
-	 * @return the tomcatInstanceId
-	 */
-	public int getTomcatInstanceId() {
-		return tomcatInstanceId;
-	}
-
-	/**
-	 * @param tomcatInstanceId
-	 *            the tomcatInstanceId to set
-	 */
-	public void setTomcatInstanceId(int tomcatInstanceId) {
-		this.tomcatInstanceId = tomcatInstanceId;
-	}
-
-	/**
-	 * @return the createUserId
-	 */
 	public int getCreateUserId() {
 		return createUserId;
 	}
 
-	/**
-	 * @param createUserId
-	 *            the createUserId to set
-	 */
 	public void setCreateUserId(int createUserId) {
 		this.createUserId = createUserId;
+	}
+
+	public String getVersionAndTimeAndTomcat() {
+		String str = String.valueOf(version)
+				+ " - "
+				+ MeerkatUtils
+						.dateTimeToString(
+								this.createdTime,
+								MeerkatConstants.CONFIG_FILE_VERSION_DATE_TIME_FORMATTER);
+		if (getTomcatInstance() != null) {
+			str = str + "(" + getTomcatInstance().getName() + ")";
+		}
+		return str;
+
+	}
+
+	public int getId() {
+		return Id;
+	}
+
+	public void setId(int id) {
+		Id = id;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public TomcatInstance getTomcatInstance() {
+		return tomcatInstance;
+	}
+
+	public void setTomcatInstance(TomcatInstance tomcatInstance) {
+		this.tomcatInstance = tomcatInstance;
 	}
 
 }

@@ -3,8 +3,12 @@
  */
 package com.athena.meerkat.controller.web.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -12,11 +16,19 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table
+@Table(name = "tomcat_domain_datasource")
 public class TomcatDomainDatasource {
+	
+	
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "Id")
 	private int id;
+	
+	@Column(name = "datasource_id")
 	private int datasourceId;
+	
+	@Column(name = "tomcat_domain_id")
 	private int tomcatDomainId;
 
 	/**
@@ -34,36 +46,25 @@ public class TomcatDomainDatasource {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(int id) {
 		this.id = id;
 	}
 
-	/**
-	 * @return the datasourceId
-	 */
 	public int getDatasourceId() {
 		return datasourceId;
 	}
 
-	/**
-	 * @param datasourceId the datasourceId to set
-	 */
 	public void setDatasourceId(int datasourceId) {
 		this.datasourceId = datasourceId;
 	}
 
-	/**
-	 * @return the tomcatDomainId
-	 */
 	public int getTomcatDomainId() {
 		return tomcatDomainId;
 	}
 
-	/**
-	 * @param tomcatDomainId the tomcatDomainId to set
-	 */
 	public void setTomcatDomainId(int tomcatDomainId) {
 		this.tomcatDomainId = tomcatDomainId;
 	}

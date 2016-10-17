@@ -1,8 +1,10 @@
 package com.athena.meerkat.controller.web.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,11 +12,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 
 /**
  * Represent the machine information
@@ -31,7 +37,7 @@ public class Server implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "Id")
-	private int Id;
+	private int id;
 	@Column(name = "name", nullable = false)
 	private String name;
 	@Column(name = "host_name")
@@ -68,22 +74,39 @@ public class Server implements Serializable {
 	private String jvmVersion;
 	@Column(name = "ssh_port")
 	private int sshPort;
-	@Column(name = "ssh_ipaddr")
-	private String sshIpaddr;
+
+	@OneToOne
+	@JoinColumn(name = "ssh_ni_id")
+	private NetworkInterface sshNi;
+
 	@Column(name = "state")
 	private int state;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "server")
-	@JsonManagedReference
-	private Collection<NetworkInterface> networkInterfaces;
+	private List<NetworkInterface> networkInterfaces;
 
 	@OneToMany(mappedBy = "server", fetch = FetchType.LAZY)
-	@JsonManagedReference
+	@JsonManagedReference(value = "inst-server")
 	private Collection<TomcatInstance> tomcatInstances;
 
 	@OneToMany(mappedBy = "server", fetch = FetchType.LAZY)
 	@JsonManagedReference
 	private Collection<SshAccount> sshAccounts;
+
+	@ManyToOne
+	@JsonBackReference(value = "grid-server")
+	private DatagridServerGroup datagridServerGroup;
+
+	// number of session for datagrid server
+	@Transient
+	private int sessionNo;
+
+	public String getGroupName() {
+		if (datagridServerGroup != null) {
+			return datagridServerGroup.getName();
+		}
+		return "";
+	}
 
 	public String getName() {
 		return name;
@@ -221,6 +244,11 @@ public class Server implements Serializable {
 		this.state = state;
 	}
 
+	public String getStateNm() {
+		// wait for common handler
+		return "";
+	}
+
 	/**
 	 * Constructor with required information
 	 * 
@@ -248,7 +276,7 @@ public class Server implements Serializable {
 	}
 
 	public Server(int _id, String _name) {
-		Id = _id;
+		setId(_id);
 		name = _name;
 	}
 
@@ -276,15 +304,14 @@ public class Server implements Serializable {
 	}
 
 	public int getId() {
-		return Id;
+		return id;
 	}
 
 	public Collection<NetworkInterface> getNetworkInterfaces() {
 		return networkInterfaces;
 	}
 
-	public void setNetworkInterfaces(
-			Collection<NetworkInterface> networkInterfaces) {
+	public void setNetworkInterfaces(List<NetworkInterface> networkInterfaces) {
 		this.networkInterfaces = networkInterfaces;
 	}
 
@@ -311,6 +338,13 @@ public class Server implements Serializable {
 		this.sshAccounts = sshAccounts;
 	}
 
+	public void addSshAccounts(SshAccount acc) {
+		if (this.sshAccounts == null) {
+			this.sshAccounts = new ArrayList<SshAccount>();
+		}
+		sshAccounts.add(acc);
+	}
+
 	public int getSshPort() {
 		return sshPort;
 	}
@@ -319,12 +353,59 @@ public class Server implements Serializable {
 		this.sshPort = sshPort;
 	}
 
-	public String getSshIpaddr() {
-		return sshIpaddr;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public void setSshIpaddr(String sshIpaddr) {
-		this.sshIpaddr = sshIpaddr;
+	public NetworkInterface getSshNi() {
+		return sshNi;
 	}
 
+	public void setSshNi(NetworkInterface sshNi) {
+		this.sshNi = sshNi;
+	}
+
+	public void addNis(NetworkInterface ni) {
+		if (this.networkInterfaces == null) {
+			networkInterfaces = new ArrayList<NetworkInterface>();
+		}
+		networkInterfaces.add(ni);
+	}
+
+	public String getSshIPAddr() {
+		if (sshNi != null) {
+			return sshNi.getIpv4();
+		}
+		return "";
+	}
+
+	public int getSshNiId() {
+		if (sshNi != null) {
+			return sshNi.getId();
+		}
+		return 0;
+	}
+
+	public void removeSSHAccount(SshAccount ssh) {
+		if (sshAccounts != null) {
+			sshAccounts.remove(ssh);
+		}
+
+	}
+
+	public DatagridServerGroup getDatagridServerGroup() {
+		return datagridServerGroup;
+	}
+
+	public void setDatagridServerGroup(DatagridServerGroup datagridServerGroup) {
+		this.datagridServerGroup = datagridServerGroup;
+	}
+
+	public int getSessionNo() {
+		return sessionNo;
+	}
+
+	public void setSessionNo(int sessionNo) {
+		this.sessionNo = sessionNo;
+	}
 }

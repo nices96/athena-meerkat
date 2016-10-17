@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import com.athena.meerkat.controller.MeerkatConstants;
 import com.athena.meerkat.controller.ServiceResult;
 import com.athena.meerkat.controller.ServiceResult.Status;
+import com.athena.meerkat.controller.web.common.code.CommonCodeRepository;
+import com.athena.meerkat.controller.web.entities.CommonCode;
 import com.athena.meerkat.controller.web.entities.DataSource;
 import com.athena.meerkat.controller.web.entities.TomcatInstance;
 import com.athena.meerkat.controller.web.resources.repositories.DataSourceRepository;
@@ -22,6 +24,8 @@ public class DataSourceService {
 	private DataSourceRepository datasourceRepo;
 	@Autowired
 	private TomcatInstanceRepository tomcatRepo;
+	@Autowired
+	private CommonCodeRepository commonRepo;
 
 	public ServiceResult add(String name, String dbType, String userName,
 			String pwd, int timeOut, int maxConnectionPool,
@@ -32,7 +36,8 @@ public class DataSourceService {
 				|| maxConnectionPool < minConnectionPool || jdbcUrl.isEmpty()) {
 			return new ServiceResult(Status.FAILED, "Invalid data");
 		}
-		DataSource ds = datasourceRepo.findByNameOrJdbcUrl(name, jdbcUrl);
+		DataSource ds = datasourceRepo.findByNameContainingOrJdbcUrlContaining(
+				name, jdbcUrl);
 		if (ds != null) {
 			return new ServiceResult(Status.FAILED, "Duplicated");
 		}
@@ -48,16 +53,11 @@ public class DataSourceService {
 		return new ServiceResult(Status.DONE, "Done", ds);
 	}
 
-	public ServiceResult delete(int datasource_id) {
-		DataSource ds = datasourceRepo.findOne(datasource_id);
-		if (ds == null) {
-			return new ServiceResult(Status.FAILED, "Not exist");
-		}
+	public void delete(DataSource ds) {
 		datasourceRepo.delete(ds);
-		return new ServiceResult(Status.DONE, "Deleted", true);
 	}
 
-	public ServiceResult testConnection(String jdbcUrl, String userName,
+	public boolean testConnection(String jdbcUrl, String userName,
 			String password, String dbType) {
 		String driver = MeerkatConstants.MYSQL_DRIVER;
 		if (dbType.toLowerCase().equals("mysql")) {
@@ -69,31 +69,19 @@ public class DataSourceService {
 		try {
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
-			return new ServiceResult(Status.FAILED, "No JDBC driver");
+			return false;
 		}
 		try {
 			Connection conn = (Connection) DriverManager.getConnection(jdbcUrl,
 					userName, password);
 			if (conn == null) {
-				return new ServiceResult(Status.FAILED, "Connection failed");
+				return false;
 			}
-			return new ServiceResult(Status.DONE, "Successful connection");
+			return true;
 		} catch (SQLException e) {
-			return new ServiceResult(Status.FAILED, "Connection failed");
+			return false;
 		}
 
-	}
-
-	public ServiceResult search(String keyword) {
-		List<DataSource> datasourcesByName = datasourceRepo.findByName(keyword);
-		List<DataSource> datasourcesByJdbc = datasourceRepo
-				.findByJdbcUrl(keyword);
-
-		if (datasourcesByJdbc == null && datasourcesByName == null) {
-			return new ServiceResult(Status.FAILED, "Null");
-		}
-		datasourcesByJdbc.addAll(datasourcesByName);
-		return new ServiceResult(Status.DONE, "Done", datasourcesByJdbc);
 	}
 
 	public ServiceResult edit(int id, String name, String dbType,
@@ -125,8 +113,19 @@ public class DataSourceService {
 
 	public List<DataSource> getAll() {
 		List<DataSource> list = datasourceRepo.findAll();
+		for (DataSource ds : list) {
+			ds.setTomcatInstancesNo(this.getAssocicatedTomcatInstancesNo(ds
+					.getId()));
+		}
 		return list;
+	}
 
+	public int getAssocicatedTomcatInstancesNo(int datasourceId) {
+		return datasourceRepo.getAssocicatedTomcatInstancesNo(datasourceId);
+	}
+
+	public List<TomcatInstance> getAssocicatedTomcatInstances(int datasourceId) {
+		return datasourceRepo.getAssocicatedTomcatInstances(datasourceId);
 	}
 
 	public DataSource findOne(int id) {
@@ -157,5 +156,32 @@ public class DataSourceService {
 		// tomcat.removeDataSources(deletingDataSources);
 		// tomcat.associateDataSources(datasources);
 		// tomcatRepo.save(tomcat);
+	}
+
+	public List<CommonCode> getDBTypes() {
+		return commonRepo
+				.findByGropId(MeerkatConstants.CODE_GROP_DB_TYPE);
+	}
+
+	public List<DataSource> getDatasources(String name) {
+		return datasourceRepo.findByName(name);
+	}
+
+	public DataSource save(DataSource ds) {
+		return datasourceRepo.save(ds);
+	}
+
+	public List<DataSource> search(String keyword) {
+		List<DataSource> datasourcesByName = datasourceRepo
+				.findByNameContaining(keyword);
+		return datasourcesByName;
+	}
+	
+	public List<DataSource> listNotAssigned(int domainId) {
+		return datasourceRepo.listNotAssigned(domainId);
+	}
+	
+	public List<DataSource> listDomainLinked(int domainId) {
+		return datasourceRepo.listDomainLinked(domainId);
 	}
 }

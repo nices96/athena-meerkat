@@ -22,25 +22,26 @@ Ext.define('webapp.controller.MenuController', {
         var is_leaf = record.get("leaf");
         var navField = Ext.getCmp("navigationField");
 
-        //if (is_leaf){
-        //    navigationText = navField.getValue() + " > " + menuText;
-        //
-        //else {
-        //vigationText = menuText;
-        //}
 
-        navField.setText(menuText);
+        if (menuId != 'create-wizard') {
+            navField.setText(menuText);
+        }
+
 
         if(menuId !== undefined){
             if (!is_leaf){
-                this.loadChildMenus(menuId);
+                this.loadChildMenus(menuId, dataview.up('treepanel'));
             }
 
-            this.showMenu(menuId, menuText);
-            // turn off live busy threads chart on monitoring part
-            if(GlobalData.busyThreadsChartInterval > -1){
-                clearInterval(GlobalData.busyThreadsChartInterval);
-                GlobalData.busyThreadsChartInterval = -1;
+            if (menuId != 'create-wizard') {
+                this.showMenu(menuId, menuText);
+                // turn off live busy threads chart on monitoring part
+                if(GlobalData.busyThreadsChartInterval > -1){
+                    clearInterval(GlobalData.busyThreadsChartInterval);
+                    GlobalData.busyThreadsChartInterval = -1;
+                }
+            } else {
+                Ext.create('widget.ticWizard').show();
             }
         }
 
@@ -55,6 +56,10 @@ Ext.define('webapp.controller.MenuController', {
             mnuContext = Ext.create("Ext.menu.Menu",{
 
             items: [{
+                id: 'create-wizard',
+                text: 'Create Wizard'
+            },
+            {
                 id: 'new-domain',
                 text: 'New Domain'
             },
@@ -72,6 +77,9 @@ Ext.define('webapp.controller.MenuController', {
 
                 click: function( _menu, _item, _e, _eOpts ) {
                    switch (_item.id) {
+                        case 'create-wizard':
+                            Ext.create('widget.ticWizard').show();
+                            break;
                         case 'new-domain':
                             webapp.app.getController("DomainController").showDomainWindow("new", 0);
                             break;
@@ -102,10 +110,6 @@ Ext.define('webapp.controller.MenuController', {
                 text: 'New Tomcat'
             },
             {
-                id: 'create-wizard',
-                text: 'Wizard'
-            },
-            {
                 id: 'edit-domain',
                 text: 'Edit'
             },
@@ -129,9 +133,6 @@ Ext.define('webapp.controller.MenuController', {
                    switch (_item.id) {
                         case 'new-tomcat':
                             webapp.app.getController("TomcatController").showTomcatWindow("new", 0, domainId);
-                            break;
-                        case 'create-wizard':
-                            Ext.create('widget.ticWizard').show();
                             break;
                         case 'edit-domain':
                             webapp.app.getController("DomainController").showDomainWindow("edit", domainId);
@@ -255,6 +256,7 @@ Ext.define('webapp.controller.MenuController', {
             //navigationText = "Monitoring > Tomcat Instances > ...";
         }else if (menuId === "resourcemng_servers") {
             activeItem = 7;
+             webapp.app.getStore("ServerStore").reload();
             //navigationText = "Resource Management > Servers";
 
         }else if (menuId === "resourcemng_servers_groups") {
@@ -279,7 +281,7 @@ Ext.define('webapp.controller.MenuController', {
 
     },
 
-    loadChildMenus: function(parentId) {
+    loadChildMenus: function(parentId, treePanel) {
         var url = GlobalData.urlPrefix;
         var is_child_leaf = false;
         var prefix_child_menu_id = "";
@@ -318,7 +320,7 @@ Ext.define('webapp.controller.MenuController', {
             return;
         }
 
-        var treePanel = Ext.getCmp("menuTreePanel");
+        //var treePanel = Ext.getCmp("menuTreePanel");
         var parentNode = treePanel.getRootNode().findChild("menuId", parentId, true);
         if (parentNode === undefined || parentNode === null) {
             return;
@@ -361,7 +363,7 @@ Ext.define('webapp.controller.MenuController', {
 
     init: function(application) {
         this.control({
-            "#menuTreePanel": {
+            "#menuTreePanel2": {
                 itemclick: this.onTreepanelItemClick
             },
             "treepanel": {

@@ -30,7 +30,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.athena.meerkat.controller.web.entities.TomcatInstance;
 
-
 /**
  * <pre>
  * 
@@ -42,16 +41,10 @@ import com.athena.meerkat.controller.web.entities.TomcatInstance;
  */
 public interface TomcatInstanceRepository extends
 		JpaRepository<TomcatInstance, Integer> {
-	List<TomcatInstance> findByDomainId(int domainId);
 
-	/**
-	 * <pre>
-	 * 
-	 * </pre>
-	 * 
-	 * @param name
-	 * @param domainId
-	 * @return
-	 */
-	TomcatInstance findByNameAndDomainId(String name, int domainId);
+	List<TomcatInstance> findByTomcatDomain_Id(int domainId);
+
+	List<TomcatInstance> findByNameContainingAndTomcatDomain_Id(String name,
+			int domainId);
+
 }

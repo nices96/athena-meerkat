@@ -37,17 +37,17 @@ public class SshAccount implements Serializable {
 	@Column(name = "password")
 	private String password;
 	@Column(name = "is_root")
-	private boolean isRoot;
+	private Boolean isRoot;
 
 	@ManyToOne
 	@JsonBackReference
 	private Server server;
 
-	public boolean isRoot() {
+	public Boolean isRoot() {
 		return isRoot;
 	}
 
-	public void setRoot(boolean isRoot) {
+	public void setRoot(Boolean isRoot) {
 		this.isRoot = isRoot;
 	}
 
@@ -81,5 +81,12 @@ public class SshAccount implements Serializable {
 
 	public void setServer(Server server) {
 		this.server = server;
+	}
+
+	public int getServerId() {
+		if (server != null) {
+			return server.getId();
+		}
+		return 0;
 	}
 }

@@ -37,14 +37,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.athena.meerkat.controller.ServiceResult;
-import com.athena.meerkat.controller.ServiceResult.Status;
 import com.athena.meerkat.controller.common.SSHManager;
 import com.athena.meerkat.controller.common.State;
 import com.athena.meerkat.controller.tomcat.instance.domain.ConfigFileVersionRepository;
-import com.athena.meerkat.controller.web.entities.TomcatInstance;
+import com.athena.meerkat.controller.web.common.code.CommonCodeRepository;
 import com.athena.meerkat.controller.web.entities.DataSource;
+import com.athena.meerkat.controller.web.entities.TomcatApplication;
+import com.athena.meerkat.controller.web.entities.TomcatInstConfig;
+import com.athena.meerkat.controller.web.entities.TomcatInstance;
 import com.athena.meerkat.controller.web.resources.repositories.DataSourceRepository;
+import com.athena.meerkat.controller.web.tomcat.repositories.ApplicationRepository;
+import com.athena.meerkat.controller.web.tomcat.repositories.TomcatConfigFileRepository;
+import com.athena.meerkat.controller.web.tomcat.repositories.TomcatInstConfigRepository;
 import com.athena.meerkat.controller.web.tomcat.repositories.TomcatInstanceRepository;
 
 /**
@@ -72,7 +76,17 @@ public class TomcatInstanceService {
 	private ConfigFileVersionRepository configRepo;
 
 	@Autowired
+	private TomcatInstConfigRepository tomcatInstConfigRepo;
+
+	@Autowired
 	private EntityManagerFactory entityManagerFactory;
+	@Autowired
+	private CommonCodeRepository commonRepo;
+	@Autowired
+	private TomcatConfigFileRepository tomcatConfigFileRepo;
+
+	@Autowired
+	private ApplicationRepository appRepo;
 
 	public TomcatInstanceService() {
 		// TODO Auto-generated constructor stub
@@ -83,8 +97,7 @@ public class TomcatInstanceService {
 	}
 
 	public List<TomcatInstance> getTomcatListByDomainId(int domainId) {
-		//return repo.findByDomainId(domainId);
-		return null;
+		return repo.findByTomcatDomain_Id(domainId);
 	}
 
 	/**
@@ -94,6 +107,10 @@ public class TomcatInstanceService {
 	 */
 	public TomcatInstance save(TomcatInstance inst) {
 		return repo.save(inst);
+	}
+
+	public void saveList(List<TomcatInstance> entities) {
+		repo.save(entities);
 	}
 
 	public TomcatInstance findOne(int id) {
@@ -233,24 +250,6 @@ public class TomcatInstanceService {
 		return true;
 	}
 
-	public ServiceResult getAssociatedTomcatList(int dataSourceId) {
-		DataSource ds = datasourceRepo.findOne(dataSourceId);
-		if (ds != null) {
-			// return new ServiceResult(Status.DONE, "",
-			// ds.getTomcatInstances());
-		}
-		return new ServiceResult(Status.FAILED, "");
-	}
-
-	public ServiceResult editAssoicateTomcatList(int dataSourceId,
-			List<Integer> removedAssociatedTomcatId) {
-		DataSource ds = datasourceRepo.findOne(dataSourceId);
-		if (ds != null) {
-
-		}
-		return null;
-	}
-
 	public List<TomcatInstance> getAll() {
 		return repo.findAll();
 	}
@@ -264,9 +263,16 @@ public class TomcatInstanceService {
 	 * @param domainId
 	 * @return
 	 */
-	public TomcatInstance findByNameAndDomain(String name, int domainId) {
-		//return repo.findByNameAndDomainId(name, domainId);
-		return null;
+	public List<TomcatInstance> findByNameAndDomain(String name, int domainId) {
+		return repo.findByNameContainingAndTomcatDomain_Id(name, domainId);
+	}
+
+	public List<TomcatInstConfig> getTomcatInstConfigs(int tomcatId) {
+		return tomcatInstConfigRepo.findByTomcatInstance_Id(tomcatId);
+	}
+
+	public List<TomcatApplication> getApplicationByTomcat(int id) {
+		return appRepo.findByTomcatInstance_Id(id);
 	}
 
 }

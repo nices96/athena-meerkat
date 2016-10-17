@@ -17,6 +17,12 @@ Ext.define('webapp.controller.TomcatInstWizardController', {
     extend: 'Ext.app.Controller',
 
     onStep2Activate: function(component, eOpts) {
+        Ext.getCmp('next-btn').setText('Save & Next &raquo;');
+        component.down('gridpanel').getStore().load();
+    },
+
+    onStep3Activate: function(component, eOpts) {
+        Ext.getCmp('next-btn').setText('Install');
         component.down('gridpanel').getStore().load();
     },
 
@@ -24,13 +30,39 @@ Ext.define('webapp.controller.TomcatInstWizardController', {
                 Ext.create('widget.dsWin').show();
     },
 
+    onNextButtonClick: function(button, e, eOpts) {
+
+        var layout = button.up("panel").getLayout();//must be CardLayout
+
+        if (layout.getNext()) {
+            layout.next();
+        }
+
+    },
+
+    onPrevButtonClick: function(button, e, eOpts) {
+
+        var layout = button.up("panel").getLayout();
+        layout.prev();
+        button.setDisabled(!layout.getPrev());
+    },
+
     init: function(application) {
         this.control({
             "ticWizard #step2": {
                 activate: this.onStep2Activate
             },
+            "ticWizard #step3": {
+                activate: this.onStep3Activate
+            },
             "ticWizard #btnWCreateDs": {
                 click: this.onDSCreateButtonClick
+            },
+            "ticWizard #next-btn": {
+                click: this.onNextButtonClick
+            },
+            "ticWizard #prev-btn": {
+                click: this.onPrevButtonClick
             }
         });
     }

@@ -121,7 +121,7 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                     flex: 7,
                                     id: 'detailTomcatServerTab',
                                     manageHeight: false,
-                                    activeTab: 1,
+                                    activeTab: 0,
                                     items: [
                                         {
                                             xtype: 'panel',
@@ -157,7 +157,7 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                                             id: 'serverSSHIPAddressCombobox',
                                                             fieldLabel: 'SSH IPAddress',
                                                             readOnly: true,
-                                                            store: 'TempoStore'
+                                                            store: 'NetworkInterfaceStore'
                                                         },
                                                         {
                                                             xtype: 'textfield',
@@ -178,10 +178,12 @@ Ext.define('webapp.view.ServerManagementContainer', {
                                                         },
                                                         {
                                                             xtype: 'button',
+                                                            hidden: true,
                                                             text: 'Save'
                                                         },
                                                         {
                                                             xtype: 'button',
+                                                            hidden: true,
                                                             text: 'Cancel'
                                                         },
                                                         {

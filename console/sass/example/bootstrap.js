@@ -2444,6 +2444,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.model.DatasourceModel": [],
   "webapp.model.DomainModel": [],
   "webapp.model.EnvironmentVariableModel": [],
+  "webapp.model.NetworkInterfaceModel": [],
   "webapp.model.RevisionModel": [],
   "webapp.model.ServerModel": [],
   "webapp.model.SessionKeyData": [],
@@ -2460,6 +2461,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.store.EnvironmentVariableStore": [],
   "webapp.store.LinkingTomcatDatasourceStore": [],
   "webapp.store.MenuTreeStore": [],
+  "webapp.store.NetworkInterfaceStore": [],
   "webapp.store.RevisionStore": [],
   "webapp.store.ServerStore": [],
   "webapp.store.TempoStore": [],
@@ -2485,7 +2487,7 @@ Ext.ClassManager.addNameAlternateMappings({
   "webapp.view.MonitoringTomcatInstance": [],
   "webapp.view.ResourceManagementContainer": [],
   "webapp.view.ServerManagementContainer": [],
-  "webapp.view.ServerManagementContainer1": [],
+  "webapp.view.SessionServerGroupContainer": [],
   "webapp.view.SeverDataGridWindow": [],
   "webapp.view.TomcatForm": [],
   "webapp.view.TomcatInstanceContainer": [],
@@ -3532,6 +3534,7 @@ Ext.ClassManager.addNameAliasMappings({
   "webapp.model.DatasourceModel": [],
   "webapp.model.DomainModel": [],
   "webapp.model.EnvironmentVariableModel": [],
+  "webapp.model.NetworkInterfaceModel": [],
   "webapp.model.RevisionModel": [],
   "webapp.model.ServerModel": [],
   "webapp.model.SessionKeyData": [],
@@ -3550,6 +3553,7 @@ Ext.ClassManager.addNameAliasMappings({
   "webapp.store.EnvironmentVariableStore": [],
   "webapp.store.LinkingTomcatDatasourceStore": [],
   "webapp.store.MenuTreeStore": [],
+  "webapp.store.NetworkInterfaceStore": [],
   "webapp.store.RevisionStore": [],
   "webapp.store.ServerStore": [],
   "webapp.store.TempoStore": [],
@@ -3603,7 +3607,9 @@ Ext.ClassManager.addNameAliasMappings({
   "webapp.view.ServerManagementContainer": [
     "widget.servermanagementcontainer"
   ],
-  "webapp.view.ServerManagementContainer1": [],
+  "webapp.view.SessionServerGroupContainer": [
+    "widget.sessionservergroupcontainer"
+  ],
   "webapp.view.SeverDataGridWindow": [],
   "webapp.view.TomcatForm": [
     "widget.tomcatform"

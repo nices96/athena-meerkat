@@ -24,7 +24,6 @@
  */
 package com.athena.meerkat.controller;
 
-import io.netty.channel.nio.NioEventLoopGroup;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -97,10 +96,11 @@ public class MeerkatBoot {
 					"/", 
 					"/*.html", 
 					"/app.js",
+					"/app.json",
 					"/resources/**", 
 					"/monitor/**", 
 					"/provi/**",
-
+					
 					"/getServerList", 
 					"/auth/notLogin*", 
 					"/auth/loginFail*",
@@ -110,7 +110,6 @@ public class MeerkatBoot {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-
 			http.anonymous()
 					.disable()
 					.authorizeRequests()
@@ -120,9 +119,9 @@ public class MeerkatBoot {
 					.antMatchers("/auth/onAfterLogin")
 					.fullyAuthenticated()
 
-					.antMatchers(HttpMethod.POST, "/domain/**").access("hasRole('ROLE_TOMCAT_ADMIN')")
+					//.antMatchers(HttpMethod.POST, "/domain/**").access("hasRole('ROLE_TOMCAT_ADMIN')")
 					.antMatchers(HttpMethod.POST, "/tomcat/**").access("hasRole('ROLE_TOMCAT_ADMIN')")
-					.antMatchers(HttpMethod.GET, "/domain/**").access("hasRole('ROLE_TOMCAT_USER')")
+					//.antMatchers(HttpMethod.GET, "/domain/**").access("hasRole('ROLE_TOMCAT_USER')")
 					.antMatchers(HttpMethod.GET, "/tomcat/**").access("hasRole('ROLE_TOMCAT_USER')")
 
 					// .antMatchers("/monitor/**").access("hasRole('ROLE_MONITOR_ADMIN')")
@@ -193,7 +192,7 @@ public class MeerkatBoot {
 
 		/*
 		 * for netty below
-		 */
+		 
 		@Bean(name = "bossGroup", destroyMethod = "shutdownGracefully")
 		public NioEventLoopGroup getBossGroup() {
 			NioEventLoopGroup group = new NioEventLoopGroup();
@@ -205,6 +204,7 @@ public class MeerkatBoot {
 			NioEventLoopGroup group = new NioEventLoopGroup();
 			return group;
 		}
+		*/
 	}
 	
 }

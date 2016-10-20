@@ -35,20 +35,25 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.Tailer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.socket.WebSocketSession;
 
 import com.athena.meerkat.controller.web.entities.DomainTomcatConfiguration;
 import com.athena.meerkat.controller.web.entities.Server;
 import com.athena.meerkat.controller.web.entities.SshAccount;
 import com.athena.meerkat.controller.web.entities.TomcatInstance;
+import com.athena.meerkat.controller.web.provisioning.log.LogTailerListener;
 import com.athena.meerkat.controller.web.tomcat.services.TomcatDomainService;
 import com.athena.meerkat.controller.web.tomcat.services.TomcatInstanceService;
 
@@ -71,6 +76,7 @@ public class TomcatProvisioningService implements InitializingBean{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TomcatProvisioningService.class);
 	private static final String JOBS_DIR_NM = "jobs";
+	public static final String LOG_END = "provisioning finished.";
 	
 	@Autowired
 	private TomcatDomainService domainService;
@@ -78,7 +84,8 @@ public class TomcatProvisioningService implements InitializingBean{
 	@Autowired
 	private TomcatInstanceService instanceService;
 	
-	private String commanderHome = "G:/project/AthenaMeerkat/.aMeerkat";
+	@Value("${meerkat.commander.home}")
+	private String commanderHome;// = "G:/project/AthenaMeerkat/.aMeerkat";
 	private File commanderDir;
 	
 	private Configuration cfg;
@@ -114,8 +121,8 @@ public class TomcatProvisioningService implements InitializingBean{
 	}
 	
 	@Transactional
-	@Async
-	public void installTomcatInstance(int domainId) {
+	//@Async
+	public void installTomcatInstance(int domainId, WebSocketSession session) {
 		
 				
 		DomainTomcatConfiguration tomcatConfig = domainService.getTomcatConfig(domainId);
@@ -130,7 +137,7 @@ public class TomcatProvisioningService implements InitializingBean{
 		if(list != null && list.size() > 0){
 		
 			for (TomcatInstance tomcatInstance : list) {
-				doInstallTomcatInstance(tomcatConfig, tomcatInstance.getServer());
+				doInstallTomcatInstance(tomcatConfig, tomcatInstance.getServer(), session);
 			}
 		} else {
 			LOGGER.warn("tomcat instances is empty!!");
@@ -138,22 +145,21 @@ public class TomcatProvisioningService implements InitializingBean{
 		
 	}
 	
-	private void doInstallTomcatInstance(DomainTomcatConfiguration tomcatConfig, Server targetServer) {
+	private void doInstallTomcatInstance(DomainTomcatConfiguration tomcatConfig, Server targetServer, WebSocketSession session) {
 
-		LOGGER.debug("SERVER NAME : " + targetServer.getName());
-		
 		String serverIp = targetServer.getSshIPAddr();
+		MDC.put("serverIp", serverIp);
+		
+		
 		List<SshAccount> accounts = (List<SshAccount>)targetServer.getSshAccounts();
 		
-		if (CollectionUtils.isEmpty(accounts)) {
-			throw new RuntimeException("생성할 ssh 계정정보가 없습니다.");
-		}
 		
 		String userId = 	accounts.get(0).getUsername();
 		String userPass = 	accounts.get(0).getPassword();
 		
 		Properties prop = new Properties(); //build-ssh.properties
 		prop.setProperty("server.ip", 	serverIp);
+		prop.setProperty("server.id", 	String.valueOf(targetServer.getId()));
 		prop.setProperty("server.port", String.valueOf(targetServer.getSshPort()));
 		prop.setProperty("user.id", 	userId);
 		prop.setProperty("user.passwd", userPass);
@@ -173,12 +179,23 @@ public class TomcatProvisioningService implements InitializingBean{
 		try {
 			int jobNum = getJobNumber(serverIp);
 			targetProps.setProperty("job.number", 	String.valueOf(jobNum));
+			File jobDir = makeJobDir(serverIp, jobNum);
+			
+			MDC.put("jobPath", jobDir.getAbsolutePath());
+			
+			sendLog(session, jobDir.getAbsolutePath());
+			
+			
+			if (CollectionUtils.isEmpty(accounts)) {
+				throw new RuntimeException("생성할 ssh 계정정보가 없습니다.");
+			}
+			
+			LOGGER.debug("SERVER NAME : " + targetServer.getName());
+			
 			
 			/*
 			 * 1. make job dir & copy build.xml.
 			 */
-			File jobDir = makeJobDir(serverIp, jobNum);
-			
 			FileUtils.copyFileToDirectory(new File(commanderDir.getAbsolutePath() + File.separator + "build.xml"), jobDir);
 			
 			
@@ -219,7 +236,32 @@ public class TomcatProvisioningService implements InitializingBean{
 			
 		} finally {
 			IOUtils.closeQuietly(output);
+			LOGGER.debug(LOG_END);
+			MDC.remove("jobPath");
+			MDC.remove("serverIp");
 		}
+	}
+	
+	/**
+	 * <pre>
+	 * send log to client(UI)
+	 * </pre>
+	 * @param session
+	 * @param jobPath
+	 */
+	private void sendLog(WebSocketSession session, String jobPath) {
+		
+		if (session != null) {
+			
+			LogTailerListener listener = new LogTailerListener(session);
+			long delay = 2000;
+			File file = new File(jobPath + File.separator + "build.log");
+			LOGGER.debug("log file : {}", file.getAbsoluteFile());
+			
+			Tailer tailer = new Tailer(file, listener, delay);
+			new Thread(tailer).start();
+		}
+		
 	}
 	
 	private int getJobNumber(String serverIp) throws IOException {

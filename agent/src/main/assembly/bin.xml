@@ -17,7 +17,9 @@
 				<include>README*</include>
 				<include>LICENSE*</include>
 				<include>NOTICE*</include>
+				<include>*.sh</include>
 			</includes>
+			 <fileMode>0755</fileMode>
 		</fileSet>
 		<fileSet>
 			<directory>${project.basedir}/src/main/resources/bin</directory>
@@ -59,6 +61,11 @@
 		<fileSet>
 			<directory>${project.basedir}/src/main/resources/config</directory>
 			<outputDirectory>conf</outputDirectory>
+            <fileMode>0644</fileMode>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/src/main/resources/sigar</directory>
+			<outputDirectory>sigar</outputDirectory>
             <fileMode>0644</fileMode>
 		</fileSet>
 		<fileSet>
